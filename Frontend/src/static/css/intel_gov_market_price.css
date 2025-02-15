@@ -1,0 +1,389 @@
+ /* CSS Styles */
+ :root {
+    --primary-color: #4CAF50;
+    --secondary-color: #2196F3;
+    --danger-color: #f44336;
+    --success-color: #8BC34A;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --text-dark: #2d3436;
+    --text-light: #ffffff;
+}
+
+.intel-gov-market-root {
+    margin:0px;
+    padding:0px;
+    background: linear-gradient(135deg, #f5faf5 0%, #c3e2c3 100%);
+    min-height: 100vh;
+    color: var(--text-dark);
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+.Priceresult_root{
+    margin:0px;
+}
+
+/* Glassmorphism Effects */
+.Priceresult_glass-nav, .Priceresult_glass-card, .Priceresult_glass-footer {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Navigation */
+.Priceresult_glass-nav {
+    padding: 1rem 2rem;
+    margin: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.Priceresult_nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Priceresult_logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.Priceresult_nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.Priceresult_nav-link {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.Priceresult_nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* Main Container */
+.Priceresult_container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.Priceresult_header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.Priceresult_date-card{
+    width:max-content;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:1rem;
+    font-size:20px;
+}
+
+.Priceresult_main-title {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-top: 1rem;
+}
+
+/* Weather Card */
+.Priceresult_weather-card {
+    padding: 1.5rem;
+}
+
+.Priceresult_weather-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_weather-header i {
+    font-size: 2rem;
+    color: var(--secondary-color);
+}
+
+.Priceresult_weather-section {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_weather-item {
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.Priceresult_weather-item.best { background: #e8f5e9; }
+.Priceresult_weather-item.worst { background: #ffebee; }
+
+.Priceresult_weather-warning {
+    background: #fff3e0;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #ef6c00;
+}
+
+/* Dashboard Grid */
+.Priceresult_dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Commodity Card */
+.Priceresult_commodity-card {
+    padding: 1.5rem;
+}
+
+.Priceresult_crop-hero {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_crop-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.Priceresult_crop-hero:hover .Priceresult_crop-image {
+    transform: scale(1.05);
+}
+
+.Priceresult_crop-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: var(--text-light);
+}
+
+.Priceresult_stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.Priceresult_stat-card {
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-light);
+}
+
+.Priceresult_stat-card i {
+    font-size: 1.5rem;
+}
+
+.Priceresult_stat-card.primary { background: var(--primary-color); }
+.Priceresult_stat-card.success { background: var(--success-color); }
+.Priceresult_stat-card.danger { background: var(--danger-color); }
+
+/* Price Extremes Section */
+.Priceresult_extremes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.Priceresult_extremes-card {
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.Priceresult_extremes-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+}
+
+.Priceresult_peak-card::before { background: var(--success-color); }
+.Priceresult_trough-card::before { background: var(--danger-color); }
+
+.Priceresult_extremes-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_extremes-header i {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+}
+
+.Priceresult_extremes-item {
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_extremes-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.Priceresult_extremes-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.Priceresult_price-range {
+    margin: 2rem 0;
+}
+
+.Priceresult_range-item {
+    position: relative;
+}
+
+.Priceresult_range-bar {
+    height: 8px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    position: relative;
+    margin: 1rem 0;
+}
+
+.Priceresult_range-bar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: calc(var(--width) * 1%);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 4px;
+}
+
+.Priceresult_range-item span {
+    display: flex;
+    gap:1rem;
+    font-size: 1rem;
+    color: #666;
+}
+
+/* Warning Card */
+.Priceresult_warning-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background: #fff3e0;
+    border-color: #ff9800;
+}
+
+.Priceresult_warning-icon i {
+    font-size: 2.5rem;
+    color: #ff9800;
+}
+
+.Priceresult_warning-content h3 {
+    color: #ff9800;
+    margin-bottom: 0.5rem;
+}
+
+.Priceresult_warning-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Visualization Section */
+.Priceresult_visualization-section {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.Priceresult_graph-card {
+    padding: 1.5rem;
+}
+
+.Priceresult_graph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.Priceresult_graph-legend {
+    display: flex;
+    gap: 1rem;
+}
+
+.Priceresult_legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.Priceresult_color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+.Priceresult_color-box.current { background: var(--primary-color); }
+.Priceresult_color-box.forecast { background: var(--secondary-color); }
+
+.Priceresult_graph-container {
+    height: 400px;
+    position: relative;
+}
+
+/* Footer */
+.Priceresult_glass-footer {
+    text-align: center;
+    padding: 1.5rem;
+    margin: 2rem 1rem 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .Priceresult_container {
+        padding: 1rem;
+    }
+
+    .Priceresult_main-title {
+        font-size: 2rem;
+    }
+
+    .Priceresult_graph-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

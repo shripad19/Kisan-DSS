@@ -1,0 +1,49 @@
+.intel-price-form-root{
+    position:fixed;
+    top:0px;
+    left:0px;
+    width:100vw;
+    height:100vh;
+    background-color:rgba(0, 62, 9, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index:1000;
+}
+
+.intel-price-form-container{
+    width:45%;
+    height:auto;
+    background-color: white;
+    border-radius:5px;
+    border:1px double rgb(204, 203, 203);
+    box-shadow: 2px 3px #d6d4d4;
+    color:black;
+    font-family: sans-serif;
+    padding:1rem;
+}
+
+.intel-price-form-header{
+    padding-bottom: 1rem;
+    font-size:1.3rem;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.intel-gov-market-form-loader-div {
+    height: 5px;
+    width: 100%;
+    --c:no-repeat linear-gradient(#6100ee 0 0);
+    background: var(--c),var(--c),#d7b8fc;
+    background-size: 60% 100%;
+    animation: l16 3.5s infinite;
+  }
+  @keyframes l16 {
+    0%   {background-position:-150% 0,-150% 0}
+    66%  {background-position: 250% 0,-150% 0}
+    100% {background-position: 250% 0, 250% 0}
+  }
+
+  .error-message{
+    color: red;
+  }

@@ -1,0 +1,339 @@
+#cover_root {
+    --primary-green: #2d572c;
+    --fresh-green: #4caf50;
+    --earth-brown: #8d6e63;
+    --status-live: #4CAF50;
+    --status-offline: #f44336;
+    --background: #f5f5f5;
+}
+.farmer-dashboard-root{
+    margin:0px;
+    padding: 0px;
+    overflow: hidden;
+}
+#cover_root body{
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom right, #e8f5e9, #f1f8e9);
+    margin: 0;
+    padding: 0;
+    color: var(--primary-green);
+}
+
+#cover_root .cover_container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+#cover_root .cover_heading {
+    text-align: center;
+    font-size: 2.8rem;
+    color: var(--primary-green);
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+#cover_root .cover_service_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+#cover_root .cover_service_card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(76,175,80,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    border-top: 5px solid var(--fresh-green);
+}
+
+#cover_root .cover_service_card.cover_offline {
+    border-top-color: var(--status-offline);
+    opacity: 0.8;
+}
+
+#cover_root .cover_service_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(76,175,80,0.2);
+}
+
+#cover_root .cover_status_badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#cover_root .cover_live {
+    background: var(--status-live);
+    color: white;
+}
+
+#cover_root .cover_offline {
+    background: var(--status-offline);
+    color: white;
+}
+
+#cover_root .cover_service_icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+#cover_root .cover_service_name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+#cover_root .cover_service_description {
+    color: var(--earth-brown);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+#cover_root .cover_access_button {
+    display: inline-block;
+    padding: 10px 25px;
+    background: var(--fresh-green);
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    outline: none;
+    border:none;
+    cursor: pointer;
+}
+
+#cover_root .cover_service_card.cover_offline .cover_access_button {
+    background: var(--status-offline);
+    cursor: not-allowed;
+}
+
+#cover_root .cover_access_button:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    #cover_root .cover_heading {
+        font-size: 2rem;
+    }
+    
+    #cover_root .cover_service_grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+.farmer-dashboard-smart-container {
+    max-width: 1000px;
+    margin: 50px auto 40px;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    border:1px solid rgb(241, 237, 237);
+}
+
+.farmer-dashboard-h1 {
+    text-align: center;
+    color: var(--primary-green);
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* === Form Styles === */
+.farmer-dashboard-transport-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.farmer-dashboard-input-group {
+    position: relative;
+}
+
+.farmer-dashboard-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-green);
+}
+
+.farmer-dashboard-input-group select,input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #c8e6c9;
+    border-radius: 10px;
+    background: #f8fff6;
+    transition: all 0.3s ease;
+    appearance: none;
+}
+
+/* .farmer-dashboard-input-group input */
+
+.farmer-dashboard-input-group select:focus {
+    border-color: var(--secondary-green);
+    box-shadow: 0 0 0 3px rgba(76,175,80,0.2);
+    outline: none;
+}
+
+.farmer-dashboard-hidden {
+    display: none !important;
+}
+
+/* === Results Section === */
+.farmer-dashboard-results-section {
+    margin-top: 2rem;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+}
+
+.farmer-dashboard-results-section.farmer-dashboard-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.farmer-dashboard-result-card {
+    background: #f8fff6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-left: 4px solid var(--secondary-green);
+    box-shadow: 0 4px 12px rgba(0, 75, 0, 0.05);
+}
+
+
+
+.farmer-dashboard-result-grid {
+    display: flex;
+    flex-direction:column;
+    padding:1rem;
+    justify-content: center;
+    gap:1rem;
+}
+.farmer-dashboard-result-grid p{
+    margin:0px;
+    padding:0px;
+    text-align: justify;
+}
+.decision-text{
+    font-size:18px;
+    font-weight: 600;
+}
+.farmer-dashboard-result-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.farmer-dashboard-result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin: 0.5rem 0;
+}
+
+.farmer-dashboard-result-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* === Buttons === */
+.farmer-dashboard-calculate-btn {
+    background: var(--primary-green);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    grid-column: 1 / -1;
+}
+
+.farmer-dashboard-calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+}
+
+/* === Loading State === */
+.farmer-dashboard-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.5);
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    place-items: center;
+    z-index: 1000;
+}
+
+/* === Error Handling === */
+.farmer-dashboard-error-message {
+    color: var(--alert-red);
+    padding: 1rem;
+    background: #fdeded;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .farmer-dashboard-smart-container {
+        margin: 80px 15px 30px;
+        padding: 1.5rem;
+    }
+    
+    .farmer-dashboard-transport-form {
+        grid-template-columns: 1fr;
+    }
+
+    .farmer-dashboard-h1 {
+        font-size: 2rem;
+    }
+}
+.farmer-dashboard-loader{
+    width:100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap:1rem;
+}
+.farmer-dashboard-loader p{
+    margin:0px;
+    padding:0px;
+}
+.farmer-dashboard-loader-div {
+    height: 5px;
+    width: 80%;
+    --c:no-repeat linear-gradient(#6100ee 0 0);
+    background: var(--c),var(--c),#d7b8fc;
+    background-size: 60% 100%;
+    animation: l16 3.5s infinite;
+  }
+  @keyframes l16 {
+    0%   {background-position:-150% 0,-150% 0}
+    66%  {background-position: 250% 0,-150% 0}
+    100% {background-position: 250% 0, 250% 0}
+  }
