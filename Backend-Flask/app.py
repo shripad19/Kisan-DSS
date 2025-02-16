@@ -11,6 +11,8 @@ import re
 import random
 from flask_cors import CORS
 import time
+import concurrent.futures
+
 
 load_dotenv()
 app = Flask(__name__)
@@ -41,6 +43,9 @@ except FileNotFoundError as e:
 API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key = API_KEY)
 geminimodel = genai.GenerativeModel("gemini-1.5-flash")
+
+# fule data key
+DAILY_FULE_DATA_KEY = os.getenv("DAILY_FULE_DATA_KEY")
 
 # gemini request
 def gemini_response(Prompt):
@@ -102,9 +107,28 @@ markets_data = {
     ]
 }
 
+subdistrict_data = {
+    "Kolhapur": ["Kolhapur", "Vadgaonpeth"],
+    "Pune": [
+        "Pune", "Pimpri", "Junnar", "Moshi", "Junnar", 
+        "Manchar", "Junnar", "Saswad", "Khadiki", "Shirur", "Baramati", 
+        "Nira", "Khed", "Bhor", "Manjri", "Indapur", 
+        "Dound", "Indapur", "Mulshi", "Narayangaon", "Bhigwan"
+    ],
+    "Sangli": [
+        "Sangli", "Vita", "Islampur", "Miraj", "Palus", 
+        "Sangli", "Tasgaon"
+    ],
+    "Satara": ["Vai", "Satara", "Phaltan", "Vaduj", "Karad", "Koregaon", "Lonand"],
+    "Solapur": [
+        "Akluj", "Barshi", "Pandharpur", 
+        "Mangal Wedha", "Mohol", "Madha", "Karmala", "Barshi", "Solapur", 
+        "Dudhani", "Akkalkot", "Barshi", "Madha"
+    ]
+}
+
 # for yield and market price model
 def getMahaAnnualRainfall(year,district):
-    print("request recevived")
     prompt = f"""Analyze the previous rainfall conditions and pattern in Maharashtra state and predict 
                 the Annual rainfall for year : {year} and district :{district} in maharashtra. 
                 you need to predict the rainfall year and district wise.
@@ -139,6 +163,7 @@ def getMahaTemp(year,district):
     temperature = get_data(prompt)
     return temperature
 
+# crop selection guide
 def getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilColor,pH):
     Prompt = f"""
         You are an expert in crop selection. I will provide you with data that includes:
@@ -160,6 +185,7 @@ def getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilC
     data = get_data(Prompt)
     return data
 
+# market selection guide
 def getMarketSelectionConclusion(MarketData,sourceDistrict):
     Prompt = f"""
             You are expert in market selection i will provide you the market and the crop prices in that market.
@@ -177,6 +203,7 @@ def getMarketSelectionConclusion(MarketData,sourceDistrict):
     data = get_data(Prompt)
     return data
 
+# guide for which option to choose
 def getSellingDecision(commodity,marketPriceData,govMarketPrice,storageAvailability):
     prompt = f"""
             Assume that you are the farmer guide , guiding farmer to sell their product. now for farmer he have a three choices to sell their product 
@@ -260,7 +287,6 @@ def rainfallAndTempreturePrediction(subdivision,year):
    
     return aggregated_rainfall,aggregated_temperature
 
-
 # yield prediction function
 def yieldPrediction(Year, District, Commodity, Area, Rainfall, Temperature, Soil_color, Fertilizer, Nitrogen, Phosphorus, Potassium, pH):
     column_names = ['Year', 'District', 'Commodity', 'Area', 'Rainfall', 'Temperature','Soil_color','Fertilizer', 'Nitrogen', 'Phosphorus', 'Potassium', 'pH']
@@ -281,6 +307,7 @@ def marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall):
     predicted_market_price = round(prediction[0][0] , 2)
     return predicted_market_price
 
+# market data district wise
 def marketPriceSeries(District, Commodity, Year, Month):
     markets = markets_data.get(District, [])
     marketPriceData = {}
@@ -293,7 +320,7 @@ def marketPriceSeries(District, Commodity, Year, Month):
     
     return marketPriceData
 
-
+# market data of all district
 def getAllMarketPrice(Commodity, Year, Month):
     marketPriceData = {}
     for District in markets_data:
@@ -361,11 +388,120 @@ def getIntelCropData(Commoditys, Year, Month, District, Area, Nitrogen, Potassiu
         }
     return IntelCroprecData
 
+# get coordinates
+def get_coordinates(subdistrict, district):
+    subdistrict = subdistrict.lower()
+    district = district.lower()
+    query = f"{subdistrict}, {district}, India".strip().lower()
+    url = f"https://nominatim.openstreetmap.org/search?format=json&countrycodes=IN&addressdetails=1&q={query}"
+    
+    try:
+        headers = {
+            "User-Agent": "kisan-dss/1.0",
+            "Accept": "application/json",
+            "Accept-Language": "en-US,en;q=0.9",
+        }
+        response = requests.get(url,headers=headers)
+        
+        # Check if the request was successful
+        if response.status_code != 200:
+            print(f"Error: Received status code {response.status_code}")
+            return None
+        
+        # Parse the JSON response
+        data = response.json()
+        
+        if data:
+            for item in data:
+                if item.get("address"):
+                    taluka_match = item["address"].get("county") or item["address"].get("suburb") or item["address"].get("town") or item["address"].get("village")
+                    district_match = item["address"].get("state_district") or item["address"].get("county") or item["address"].get("state")
+                    
+                    # Check if the subdistrict and district match
+                    if taluka_match and district_match and subdistrict.lower() in taluka_match.lower() and district.lower() in district_match.lower():
+                        print("ok")
+                        return {"lat": float(item["lat"]), "lon": float(item["lon"])}
+        
+        # If no matching data is found
+        print("No matching data found.")
+        return None
+    
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+    except ValueError as e:
+        print(f"Failed to parse JSON: {e}")
+        print("Response:", response.text)
+        return None
+
+# get distance and duration
+def calculate_osrm_distance(source_coords, destination_coords):
+    url = f"http://router.project-osrm.org/route/v1/driving/{source_coords['lon']},{source_coords['lat']};{destination_coords['lon']},{destination_coords['lat']}?overview=false"
+    response = requests.get(url)
+    data = response.json()
+    if data.get("routes"):
+        distance = data["routes"][0]["legs"][0]["distance"] / 1000 
+        duration = data["routes"][0]["legs"][0]["duration"] / 60 
+        return {"distance": distance, "duration": duration}
+    return None
+
+# Function to fetch fuel prices
+def fetch_fuel_prices(district):
+    district = district.lower()
+    url = f"https://daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com/v1/fuel-prices/today/india/maharashtra/{district}"
+    headers = {
+        "x-rapidapi-key": DAILY_FULE_DATA_KEY,
+        "x-rapidapi-host": "daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com",
+    }
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+def calculateTransportationDistance(coords_source,fuel_prices,des_district,mileage):
+    subdistricts = subdistrict_data[des_district]
+    transportation_data_all = {}
+    transportation_data = {}
+    for des_subdistrict in subdistricts:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_coords_destination = executor.submit(get_coordinates, des_subdistrict,des_district)
+            coords_destination = future_coords_destination.result()
+            
+        if coords_source and coords_destination:
+            distance_result = calculate_osrm_distance(coords_source, coords_destination)
+            if distance_result:
+                transportation_cost = (distance_result["distance"] / mileage) * fuel_prices["fuel"]["diesel"]["retailPrice"]
+                data = {
+                    "distance": round(distance_result["distance"], 2),  
+                    "duration": round(distance_result["duration"], 2),  
+                    "transportation_cost": round(transportation_cost, 2),  
+                    "fuel_prices": round(fuel_prices["fuel"]["diesel"]["retailPrice"], 2) 
+                }
+            transportation_data[des_subdistrict] = data
+            transportation_data_all[des_subdistrict] = data
+        else :
+            data = {
+                    "distance":'N/A',  
+                    "duration": 'N/A', 
+                    "transportation_cost": 'N/A', 
+                    "fuel_prices": 'N/A'
+                }
+            transportation_data_all[des_subdistrict] = data
+            
+    return transportation_data_all,transportation_data
+
+def getTransportationData(src_subdistrict,src_district,des_district,milage):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_coords_source = executor.submit(get_coordinates, src_subdistrict,src_district)
+        future_fuel_prices = executor.submit(fetch_fuel_prices, src_district)
+        coords_source = future_coords_source.result()
+        fuel_prices = future_fuel_prices.result()
+        
+    transportation_data_all,transportation_data = calculateTransportationDistance(coords_source,fuel_prices,des_district,milage)
+    print(transportation_data_all)
+    return transportation_data_all,transportation_data
 
 @app.route('/')
 def index():
     return ("Server running on localhost:5000")
-
 
 @app.route('/intel-market-price',methods=['POST'])
 def marketPrice():
@@ -379,6 +515,16 @@ def marketPrice():
     conclusion = getMarketSelectionConclusion(marketPriceData,sourceDistrict)
     return jsonify({'data':marketPriceData,'conclusion':conclusion})
 
+@app.route('/intel-trasport-analysis',methods=['POST'])
+def getTrasportAnalysis():
+    if request.method == 'POST':
+        data = request.get_json()
+        srcSubdistrict  = data.get('srcSubdistrict')
+        srcDistrict  = data.get('srcDistrict')
+        desDistrict  = data.get('desDistrict')
+        milage  = data.get('milage')
+        transportation_data_all,transportation_data = getTransportationData(srcSubdistrict,srcDistrict,desDistrict,milage)
+        return jsonify({'data':transportation_data_all})
 
 @app.route('/intel-wpi-price',methods=['POST'])
 def IntelWPI():
@@ -426,7 +572,6 @@ def IntelWPI():
             'silverMonthIndex':silverMonthIndex,
         })
         
-        
 @app.route('/intel-crop-recommendation',methods=['POST'])
 def IntelCropRec():
     if request.method == 'POST':
@@ -457,7 +602,7 @@ def IntelCropRec():
         IntelCropData = getIntelCropData(Commoditys,Year,Month,District,Area,Nitrogen,Potassium,Phosphorus,Fertilizer,soilColor,pH)
         conclusion = getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilColor,pH)
         return jsonify({'data':IntelCropData,'conclusion':conclusion})
-    
+
 # result route
 @app.route('/intel-yield',methods=['POST'])
 def IntelYield():
@@ -551,6 +696,7 @@ def getDecision():
                         'highestLocalMarketPrice':highestLocalMarketPrice,
                         'localMarketName':localMarketName,
                         'districtName':districtName})
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
