@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../static/css/intel_gov_market_form.css";
 
-export default function IntelGovMarketForm() {
+export default function IntelGovMarketForm({setGovMarketForm}) {
   const [commodity, setCommodity] = useState("");
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
@@ -43,7 +43,11 @@ export default function IntelGovMarketForm() {
   return (
     <div className="intel-price-form-root">
       <div className="intel-price-form-container">
-        <header className="intel-price-form-header">Crop price based on WPI and MSP</header>
+        <header className="intel-price-form-header">
+          Crop price based on WPI and MSP
+          <button onClick={()=>setGovMarketForm(false)} className="close-form-price-prediction">Close</button>
+        
+          </header>
         <div className="intel-price-main-form">
           <form onSubmit={handleSubmit}>
             <div className="mb-3">

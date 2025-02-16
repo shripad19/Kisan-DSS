@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../static/css/intel_gov_market_form.css";
 
-export default function IntelLocalMarketForm() {
+export default function IntelLocalMarketForm({ setLocalMarketForm }) {
   const [commodity, setCommodity] = useState("");
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
@@ -17,53 +17,38 @@ export default function IntelLocalMarketForm() {
   const [subdistrictOptions, setSubdistrictOptions] = useState([]);
 
   const districtSubdistricts = {
-    Kolhapur: ["Kolhapur", "Vadgaonpeth"],
-    Pune: [
-      "Pune",
-      "Pimpri",
-      "Junnar",
-      "Moshi",
-      "Alephata",
-      "Manchar",
-      "Saswad",
-      "Khadiki",
-      "Shirur",
-      "Baramati",
-      "Nira",
-      "Chakan",
-      "Bhor",
-      "Manjri",
-      "Indapur",
-      "Dound",
-      "Mulshi",
-      "Narayangaon",
-      "Bhigwan",
+    Kolhapur: [
+        "Panhala", "Shahuwadi", "Shirol",
+        "Hatkanangale", "Karveer", "Gaganbawada",
+        "Radhanagari", "Kagal", "Bhudargad",
+        "Ajara", "Gadhinglaj", "Chandgad"
     ],
-    Sangli: ["Sangli", "Vita", "Islampur", "Palus", "Tasgaon"],
+    Pune: [
+        "Ambegaon", "Baramati", "Bhor",
+        "Daund", "Haveli", "Indapur",
+        "Junnar", "Khed", "Maval",
+        "Mulshi", "Pimpri Chinchwad", "Pune City",
+        "Purandar", "Shirur", "Velhe"
+    ],
+    Sangli: [
+        "Miraj", "Palus", "Tasgaon",
+        "Kavathe Mahankal", "Jat Sangli", "Khanapur",
+        "Atpadi", "Walwa", "Kadegaon",
+        "Shirala"
+    ],
     Satara: [
-      "Vai",
-      "Satara",
-      "Phaltan",
-      "Vaduj",
-      "Karad",
-      "Koregaon",
-      "Lonand",
+        "Satara", "Karad", "Wai",
+        "Koregaon", "Jaoli", "Mahabaleshwar",
+        "Khandala", "Patan", "Phaltan",
+        "Khatav", "Maan"
     ],
     Solapur: [
-      "Akluj",
-      "Barshi",
-      "Pandharpur",
-      "Mangalwedha",
-      "Mohol",
-      "Modnimb",
-      "Karmala",
-      "Solapur",
-      "Dudhani",
-      "Akkalkot",
-      "Vairag",
-      "Kurduvadi",
-    ],
-  };
+        "Akkalkot", "Barshi", "Karmala",
+        "Madha", "Malshiras", "Mangalwedha",
+        "Mohol", "Pandharpur", "Sangola",
+        "North Solapur", "South Solapur"
+      ]
+};
 
   const handleDistrictChange = (e) => {
     const selectedDistrict = e.target.value;
@@ -105,14 +90,14 @@ export default function IntelLocalMarketForm() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/intel-wpi-price",
+        "http://localhost:5000/intel-market-price",
         formData,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       const responseData = response.data;
-      navigate("/intel-gov-market-price", { state: responseData });
+      navigate("/intel-gov-market-dashboard", { state: responseData });
       setSuccess("Data submitted successfully!");
     } catch (err) {
       setError("Failed to send data. Please try again.");
@@ -125,7 +110,8 @@ export default function IntelLocalMarketForm() {
     <div className="intel-price-form-root">
       <div className="intel-price-form-container">
         <header className="intel-price-form-header">
-          Crop price based on WPI and MSP
+          Local Market Prediction
+          <button onClick={()=>setLocalMarketForm(false)} className="close-form-price-prediction">Close</button>
         </header>
         <div className="intel-price-main-form">
           <form onSubmit={handleSubmit}>
@@ -159,7 +145,8 @@ export default function IntelLocalMarketForm() {
                 ))}
               </select>
             </div>
-
+            
+            <div className="formcontent-group">
             <div className="mb-3">
               <label className="form-label">Year</label>
               <input
@@ -170,8 +157,7 @@ export default function IntelLocalMarketForm() {
                 onChange={(e) => setYear(e.target.value)}
               />
             </div>
-
-            <div className="mb-4">
+            <div className="mb-3">
               <label className="form-label">Month</label>
               <select
                 className="form-select"
@@ -199,7 +185,9 @@ export default function IntelLocalMarketForm() {
                 ))}
               </select>
             </div>
+            </div>
 
+            <div className="formcontent-group">
             <div className="mb-3">
               <label className="form-label">Your District</label>
               <select
@@ -222,7 +210,7 @@ export default function IntelLocalMarketForm() {
                 className="form-select"
                 value={srcSubdistrict}
                 onChange={(e) => setSrcSubdistrict(e.target.value)}
-                disabled={!srcDistrict} // Disable if no district is selected
+                disabled={!srcDistrict} 
               >
                 <option value="">Select Sub District</option>
                 {subdistrictOptions.map((subdistrict) => (
@@ -232,6 +220,7 @@ export default function IntelLocalMarketForm() {
                 ))}
               </select>
             </div>
+        </div>
 
             <div className="mb-3">
               <label className="form-label">Market District</label>
@@ -241,7 +230,7 @@ export default function IntelLocalMarketForm() {
                 onChange={(e) => setDesDistrict(e.target.value)}
               >
                 <option value="">Select Market District</option>
-                {Object.keys(districtMarkets).map((district) => (
+                {Object.keys(districtSubdistricts).map((district) => (
                   <option key={district} value={district}>
                     {district}
                   </option>
@@ -249,12 +238,12 @@ export default function IntelLocalMarketForm() {
               </select>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">Milage</label>
+            <div className="mb-4">
+              <label className="form-label">Milage of transportation Vehical</label>
               <input
                 type="number"
                 className="form-control"
-                placeholder="2026"
+                placeholder="15.4"
                 value={milage}
                 onChange={(e) => setMilage(e.target.value)}
               />

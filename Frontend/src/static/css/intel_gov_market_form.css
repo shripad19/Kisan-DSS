@@ -3,7 +3,8 @@
     top:0px;
     left:0px;
     width:100vw;
-    height:100vh;
+    min-height:100vh;
+    height: auto;
     background-color:rgba(0, 62, 9, 0.4);
     display: flex;
     align-items: center;
@@ -24,6 +25,7 @@
 }
 
 .intel-price-form-header{
+  position: relative;
     padding-bottom: 1rem;
     font-size:1.3rem;
     font-weight: 600;
@@ -46,4 +48,29 @@
 
   .error-message{
     color: red;
+  }
+
+  .formcontent-group{
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+
+  .close-form-price-prediction{
+    position:absolute;
+    top:0.5rem;
+    right:0.5rem;
+    font-size:1.1rem;
+    font-weight: 300;
+    padding:0.1rem 0.5rem;
+    color:red;
+    border-radius:3px;
+    border:0.5px solid rgb(219, 216, 216);
+    background-color:white;
+  }
+
+  .close-form-price-prediction:hover{
+    color:white;
+    border:1px solid white;
+    background-color:red;
   }

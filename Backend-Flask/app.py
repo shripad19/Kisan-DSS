@@ -110,20 +110,20 @@ markets_data = {
 subdistrict_data = {
     "Kolhapur": ["Kolhapur", "Vadgaonpeth"],
     "Pune": [
-        "Pune", "Pimpri", "Junnar", "Moshi", "Junnar", 
-        "Manchar", "Junnar", "Saswad", "Khadiki", "Shirur", "Baramati", 
-        "Nira", "Khed", "Bhor", "Manjri", "Indapur", 
-        "Dound", "Indapur", "Mulshi", "Narayangaon", "Bhigwan"
+        "Pune", "Pune(Pimpri)", "Junnar(Otur)", "Pune(Moshi)", "Junnar(Alephata)", 
+        "Manchar", "Junnar", "Nira(Saswad)", "Pune(Khadiki)", "Shirur", "Baramati", 
+        "Nira", "Khed(Chakan)", "Bhor", "Pune(Manjri)", "Indapur(Nimgaon Ketki)", 
+        "Dound", "Indapur", "Mulshi", "Junnar(Narayangaon)", "Indapur(Bhigwan)"
     ],
     "Sangli": [
-        "Sangli", "Vita", "Islampur", "Miraj", "Palus", 
-        "Sangli", "Tasgaon"
+        "Sangli", "Vita", "Islampur", "Sangli(Miraj)", "Palus", 
+        "Sangli(Phale, Bhajipura Market)", "Tasgaon"
     ],
     "Satara": ["Vai", "Satara", "Phaltan", "Vaduj", "Karad", "Koregaon", "Lonand"],
     "Solapur": [
-        "Akluj", "Barshi", "Pandharpur", 
-        "Mangal Wedha", "Mohol", "Madha", "Karmala", "Barshi", "Solapur", 
-        "Dudhani", "Akkalkot", "Barshi", "Madha"
+        "Akluj", "Laxmi Sopan Agriculture Produce Marketing Co Ltd", "Pandharpur", 
+        "Mangal Wedha", "Mohol", "Kurdwadi(Modnimb)", "Karmala", "Barshi", "Solapur", 
+        "Dudhani", "Akkalkot", "Barshi(Vairag)", "Kurdwadi"
     ]
 }
 
@@ -186,19 +186,22 @@ def getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilC
     return data
 
 # market selection guide
-def getMarketSelectionConclusion(MarketData,sourceDistrict):
+def getMarketSelectionConclusion(MarketData,transportation_data,sourceDistrict):
     Prompt = f"""
             You are expert in market selection i will provide you the market and the crop prices in that market.
             your job is to guide the farmer to decide the market which gives highest profit.
-            On the basis of crop price in that market.
-            In output no any desclaimers.
-            
-            output format : JSON
-            suggested_market
-            reasoning
+            On the basis of crop price in that market and the transportation cost required to reach that market.
+            in reasoning you can add some statistic reasoning so that it become more strong.
             
             marketData : {MarketData}
+            transportationData : {transportation_data}
             sourceDistrict : {sourceDistrict}
+            
+            output format : JSON
+            suggested_market : <market> <price in that market ₹/Qtl>
+            reasoning
+            
+            In output no any desclaimers or voage statements. in output Do not return marketData or transprotation data just return suggested_market reasoning.
     """
     data = get_data(Prompt)
     return data
@@ -392,7 +395,8 @@ def getIntelCropData(Commoditys, Year, Month, District, Area, Nitrogen, Potassiu
 def get_coordinates(subdistrict, district):
     subdistrict = subdistrict.lower()
     district = district.lower()
-    query = f"{subdistrict}, {district}, India".strip().lower()
+    # query = ${taluka}, ${district}, Maharashtra, India
+    query = f"{subdistrict}, {district}, Maharashtra"
     url = f"https://nominatim.openstreetmap.org/search?format=json&countrycodes=IN&addressdetails=1&q={query}"
     
     try:
@@ -457,7 +461,7 @@ def fetch_fuel_prices(district):
     return response.json()
 
 def calculateTransportationDistance(coords_source,fuel_prices,des_district,mileage):
-    subdistricts = subdistrict_data[des_district]
+    subdistricts = markets_data[des_district]
     transportation_data_all = {}
     transportation_data = {}
     for des_subdistrict in subdistricts:
@@ -496,7 +500,7 @@ def getTransportationData(src_subdistrict,src_district,des_district,milage):
         fuel_prices = future_fuel_prices.result()
         
     transportation_data_all,transportation_data = calculateTransportationDistance(coords_source,fuel_prices,des_district,milage)
-    print(transportation_data_all)
+    # print(transportation_data_all)
     return transportation_data_all,transportation_data
 
 @app.route('/')
@@ -505,24 +509,39 @@ def index():
 
 @app.route('/intel-market-price',methods=['POST'])
 def marketPrice():
-    data = request.get_json()
-    Commodity = data.get('commodity')
-    Year = data.get('year')
-    Month = data.get('month')
-    District = data.get('district')
-    sourceDistrict = data.get('sourceDistrict')
-    marketPriceData = marketPriceSeries(District, Commodity, Year, Month)
-    conclusion = getMarketSelectionConclusion(marketPriceData,sourceDistrict)
-    return jsonify({'data':marketPriceData,'conclusion':conclusion})
-
-@app.route('/intel-trasport-analysis',methods=['POST'])
-def getTrasportAnalysis():
     if request.method == 'POST':
         data = request.get_json()
-        srcSubdistrict  = data.get('srcSubdistrict')
-        srcDistrict  = data.get('srcDistrict')
-        desDistrict  = data.get('desDistrict')
+        Commodity = data.get('commodity')
+        Year = data.get('year')
+        Month = data.get('month')
+        srcSubdistrict = data.get('srcSubdistrict')
+        srcDistrict = data.get('srcDistrict')
+        desDistrict = data.get('desDistrict')
         milage  = data.get('milage')
+        
+        Year = int(Year)
+        Month = int(Month)
+        milage = int(milage)
+       
+        marketPriceData = marketPriceSeries(srcDistrict, Commodity, Year, Month)
+        transportation_data_all,transportation_data = getTransportationData(srcSubdistrict,srcDistrict,desDistrict,milage)
+        conclusion = getMarketSelectionConclusion(marketPriceData,transportation_data,srcDistrict)
+        
+        # print(conclusion)
+        return jsonify({'data':marketPriceData,'transportationData':transportation_data_all,'conclusion':conclusion})
+
+@app.route('/intel-trasport-analysis',methods=['GET'])
+def getTrasportAnalysis():
+    if request.method == 'GET':
+        # data = request.get_json()
+        # srcSubdistrict  = data.get('srcSubdistrict')
+        # srcDistrict  = data.get('srcDistrict')
+        # desDistrict  = data.get('desDistrict')
+        # milage  = data.get('milage')
+        srcSubdistrict  = "Madha"
+        srcDistrict  = "Solapur"
+        desDistrict  = "Pune"
+        milage  = 25
         transportation_data_all,transportation_data = getTransportationData(srcSubdistrict,srcDistrict,desDistrict,milage)
         return jsonify({'data':transportation_data_all})
 

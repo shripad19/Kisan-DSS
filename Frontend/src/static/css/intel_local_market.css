@@ -1,0 +1,167 @@
+:root {
+    --agri-green: #1b5e20;
+    --fresh-growth: #4caf50;
+    --earth-brown: #5d4037;
+    --golden-harvest: #ffab00;
+    --sky-blue: #82b1ff;
+}
+
+.intel-local-market-root {
+    font-family: 'Poppins', sans-serif;
+    background: #f1f8e9;
+    color: #2d572c;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+.intel-local-market-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 20px;
+}
+
+.intel-local-market-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.intel-local-market-header h1 {
+    font-size: 3.2rem;
+    color: var(--agri-green);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.intel-local-market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 20px;
+}
+
+.intel-local-market-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px rgba(76,175,80,0.1);
+    transition: transform 0.3s ease;
+    border-left: 4px solid var(--fresh-growth);
+}
+
+.intel-local-market-card:hover {
+    transform: translateY(-5px);
+}
+
+.intel-local-market-name {
+    font-size: 1.4rem;
+    color: var(--agri-green);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.intel-local-market-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.intel-local-market-detail-item {
+    background: #f8f9f7;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.intel-local-market-detail-item h3 {
+    font-size: 0.9rem;
+    color: var(--earth-brown);
+    margin: 0 0 8px 0;
+}
+
+.intel-local-market-detail-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--agri-green);
+}
+
+.intel-local-market-price-section {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 10px;
+}
+
+.intel-local-market-current-price {
+    font-size: 2rem;
+    color: var(--fresh-growth);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.intel-local-market-update-date {
+    color: var(--earth-brown);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.intel-local-market-commodities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.intel-local-market-commodity-tag {
+    background: rgba(76,175,80,0.1);
+    color: var(--agri-green);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.intel-local-market-apmc-code {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--agri-green);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .intel-local-market-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .intel-local-market-header h1 {
+        font-size: 2.5rem;
+    }
+}
+
+.intel-local-market-commodity-container{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        height:max-content;
+        padding:2rem 1rem;
+        margin-bottom:3rem;
+}
+
+.conclusion p{
+    text-align: justify;
+}

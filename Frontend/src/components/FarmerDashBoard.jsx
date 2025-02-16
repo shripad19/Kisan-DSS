@@ -1,9 +1,10 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, Link } from "react-router-dom";
 import "../static/css/farmer_dashboard.css";
 
-import IntelGovMarketForm from './IntelGovMarketForm'
+import IntelGovMarketForm from "./IntelGovMarketForm";
+import IntelLocalMarketForm from "./IntelLocalMarketForm";
 
 export default function FarmerDashBoard() {
   const [commodity, setCommodity] = useState("");
@@ -14,14 +15,14 @@ export default function FarmerDashBoard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [govMarketForm,setGovMarketForm] = useState(false);
-
+  const [govMarketForm, setGovMarketForm] = useState(false);
+  const [localMarketForm, setLocalMarketForm] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-   
+
     const formData = new FormData();
     formData.append("commodity", commodity);
     formData.append("year", year);
@@ -40,7 +41,7 @@ export default function FarmerDashBoard() {
       );
       let responseData = response.data;
       setData(responseData);
-      console.log(responseData)
+      console.log(responseData);
     } catch (err) {
       setError("Failed to build decision. Please try again.");
       console.error(err);
@@ -51,7 +52,7 @@ export default function FarmerDashBoard() {
 
   useEffect(() => {
     console.log("Loading state changed:", loading);
-  }, [loading]); 
+  }, [loading]);
 
   return (
     <div className="farmer-dashboard-root">
@@ -68,7 +69,7 @@ export default function FarmerDashBoard() {
                 <div className="farmer-dashboard-loader">
                   <div className="farmer-dashboard-loader-div"></div>
                   <p>Analyzing...</p>
-                  </div>
+                </div>
               </div>
             )}
 
@@ -140,14 +141,29 @@ export default function FarmerDashBoard() {
                   Month
                 </label>
                 <select
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-              >
-                <option value="">Select Month</option>
-                {["1 - January", "2 - February", "3 - March", "4 - April", "5 - May", "6 - June", "7 - July", "8 - August", "9 - September", "10 - October", "11 - November", "12 - December"].map((item, index) => (
-                  <option key={index + 1} value={index + 1}>{item}</option>
-                ))}
-              </select>
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                >
+                  <option value="">Select Month</option>
+                  {[
+                    "1 - January",
+                    "2 - February",
+                    "3 - March",
+                    "4 - April",
+                    "5 - May",
+                    "6 - June",
+                    "7 - July",
+                    "8 - August",
+                    "9 - September",
+                    "10 - October",
+                    "11 - November",
+                    "12 - December",
+                  ].map((item, index) => (
+                    <option key={index + 1} value={index + 1}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="farmer-dashboard-input-group">
@@ -182,57 +198,55 @@ export default function FarmerDashBoard() {
                     class="farmer-dashboard-result-grid"
                     id="farmer-dashboard-resultGrid"
                   >
-                    <p className="decision-text">
-                      
-                      {data.decision.decision}
-                      </p>
-                    <p>
-                      {data.decision.reasoning}
-                      </p>
+                    <p className="decision-text">{data.decision.decision}</p>
+                    <p>{data.decision.reasoning}</p>
                   </div>
                 </div>
               </div>
             )}
           </main>
 
-          {govMarketForm && (<IntelGovMarketForm/>)}
-          
+          {govMarketForm && <IntelGovMarketForm setGovMarketForm={setGovMarketForm}  />}
+          {localMarketForm && <IntelLocalMarketForm setLocalMarketForm={setLocalMarketForm}  />}
+
           <div className="cover_service_grid">
-            <div
-              className="cover_service_card"
-            >
+            <div className="cover_service_card">
               <div className="cover_service_icon">🏛️</div>
               <h2 className="cover_service_name">Government APMC</h2>
               <p className="cover_service_description">
-                Agricultural market platform with real-time commodity
-                prices & APMC Market price forcasting.
+                Agricultural market platform with real-time commodity prices &
+                APMC Market price forcasting.
               </p>
-              <button onClick={()=>setGovMarketForm(true)} className="cover_access_button">Access Portal</button>
+              <button
+                onClick={() => setGovMarketForm(true)}
+                className="cover_access_button"
+              >
+                Access Portal
+              </button>
             </div>
 
-            <div
-            
-              className="cover_service_card"
-            
-            >
+            <div className="cover_service_card">
               <div className="cover_service_icon">🛒</div>
               <h2 className="cover_service_name">Local Mandi</h2>
               <p className="cover_service_description">
-                Connect with regional local markets and local traders.
-                Local market price forcasting , Trasportation cost calculation and market recommendation.
+                Connect with regional local markets and local traders. Local
+                market price forcasting , Trasportation cost calculation and
+                market recommendation.
               </p>
-              <button className="cover_access_button">Access Portal</button>
+              <button
+                onClick={() => setLocalMarketForm(true)}
+                className="cover_access_button"
+              >
+                Access Portal
+              </button>
             </div>
 
-            <div
-            
-              className="cover_service_card"
-            
-            >
+            <div className="cover_service_card">
               <div className="cover_service_icon">📦</div>
               <h2 className="cover_service_name">E-Commerce</h2>
               <p className="cover_service_description">
-                Producer to Consumer Service<br/>
+                Producer to Consumer Service
+                <br />
                 Direct digital marketplace connecting farmers with consumers.
               </p>
               <button className="cover_access_button">Visit Marketplace</button>
