@@ -72,7 +72,7 @@ export default function IntelLocalMarketForm({ setLocalMarketForm }) {
     setError("");
     setSuccess("");
 
-    if (!commodity || !year || !month) {
+    if (!commodity || !year || !month ||!srcDistrict || !srcSubdistrict || !desDistrict ||!milage ) {
       setError("Please fill all the fields before submitting.");
       return;
     }
@@ -97,6 +97,7 @@ export default function IntelLocalMarketForm({ setLocalMarketForm }) {
         }
       );
       const responseData = response.data;
+      // console.log(responseData)
       navigate("/intel-gov-market-dashboard", { state: responseData });
       setSuccess("Data submitted successfully!");
     } catch (err) {

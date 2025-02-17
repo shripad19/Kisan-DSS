@@ -36,6 +36,7 @@ export default function IntelLocalMarket() {
   const [marketDataList, setMarketDataList] = useState([]);
 
   useEffect(() => {
+    setMarketDataList([]);
     if (marketPriceData && transportationData) {
       const newMarketDataList = [];
 
@@ -54,11 +55,11 @@ export default function IntelLocalMarket() {
         // Create a new market data object
         const marketData = {
           name: marketName,
-          price: price,
+          price: price+" ₹/Qtl",
           distance: transportation.distance + " Km",
           duration: transportation.duration + " hours",
           fuelPrice: transportation.fuel_prices + "₹/liter",
-          transportationCost: transportation.transportation_cost + "₹/Qtl",
+          transportationCost: transportation.transportation_cost + "₹",
         };
 
         // Add the new object to the newMarketDataList array
@@ -69,7 +70,7 @@ export default function IntelLocalMarket() {
     }
   }, [marketPriceData, transportationData]);
 
-  console.log(marketDataList);
+  // console.log(marketDataList);
 
   // Extract data for the chart
   const markets = state?.data ? Object.keys(state.data) : [];

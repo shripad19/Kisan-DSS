@@ -108,24 +108,38 @@ markets_data = {
 }
 
 subdistrict_data = {
-    "Kolhapur": ["Kolhapur", "Vadgaonpeth"],
-    "Pune": [
-        "Pune", "Pune(Pimpri)", "Junnar(Otur)", "Pune(Moshi)", "Junnar(Alephata)", 
-        "Manchar", "Junnar", "Nira(Saswad)", "Pune(Khadiki)", "Shirur", "Baramati", 
-        "Nira", "Khed(Chakan)", "Bhor", "Pune(Manjri)", "Indapur(Nimgaon Ketki)", 
-        "Dound", "Indapur", "Mulshi", "Junnar(Narayangaon)", "Indapur(Bhigwan)"
-    ],
-    "Sangli": [
-        "Sangli", "Vita", "Islampur", "Sangli(Miraj)", "Palus", 
-        "Sangli(Phale, Bhajipura Market)", "Tasgaon"
-    ],
-    "Satara": ["Vai", "Satara", "Phaltan", "Vaduj", "Karad", "Koregaon", "Lonand"],
-    "Solapur": [
-        "Akluj", "Laxmi Sopan Agriculture Produce Marketing Co Ltd", "Pandharpur", 
-        "Mangal Wedha", "Mohol", "Kurdwadi(Modnimb)", "Karmala", "Barshi", "Solapur", 
-        "Dudhani", "Akkalkot", "Barshi(Vairag)", "Kurdwadi"
-    ]
+     "Kolhapur": {"Kolhapur": "Radhanagari", "Vadgaonpeth": "Hatkanangle"},
+
+    "Pune": {
+        "Pune": "Haveli", "Pune(Pimpri)": "Haveli", "Junnar(Otur)": "Junnar", "Pune(Moshi)": "Khed", "Junnar(Alephata)": "Junnar", 
+        "Manchar": "Ambegaon", "Junnar": "Junnar", "Nira(Saswad)": "Purandhar", "Pune(Khadiki)": "Haveli", "Shirur": "Shirur", "Baramati": "Baramati", 
+        "Nira": "Baramati", "Khed(Chakan)": "Khed", "Bhor": "Bhor", "Pune(Manjri)": "Haveli", "Indapur(Nimgaon Ketki)": "Indapur", 
+        "Dound": "Daund", "Indapur": "Indapur", "Mulshi": "Mulshi", "Junnar(Narayangaon)": "Junnar", "Indapur(Bhigwan)": "Indapur"
+    },
+
+
+    "Sangli": {
+        "Sangli": "Miraj", "Vita": "Vita", "Islampur": "Walwa", "Sangli(Miraj)": "Miraj", "Palus": "Palus", 
+        "Sangli(Phale, Bhajipura Market)": "Miraj", "Tasgaon": "Tasgaon"
+    },
+
+
+    "Satara": {"Vai": "Wai", "Satara": "Koregaon", "Phaltan": "Phaltan", "Vaduj": "Khatav", "Karad": "Karad", "Koregaon": "Koregaon", "Lonand": "Phaltan"},
+    
+
+"Solapur": {
+        "Akluj": "Malshiras", "Laxmi Sopan Agriculture Produce Marketing Co Ltd": "Barshi", "Pandharpur": "Pandharpur", 
+        "Mangal Wedha": "Mangalvedhe", "Mohol": "Mohol", "Kurdwadi(Modnimb)": "Madha", "Karmala": "Karmala", "Barshi": "Barshi", "Solapur": "Solapur", 
+        "Dudhani": "Akkalkot", "Akkalkot": "Akkalkot", "Barshi(Vairag)": "Barshi", "Kurdwadi": "Madha"
+    }
 }
+
+def get_subdistrict(market):
+    for district, subdistricts in subdistrict_data.items():
+        if market in subdistricts:
+            return subdistricts[market]
+    return market 
+
 
 # for yield and market price model
 def getMahaAnnualRainfall(year,district):
@@ -191,7 +205,6 @@ def getMarketSelectionConclusion(MarketData,transportation_data,sourceDistrict):
             You are expert in market selection i will provide you the market and the crop prices in that market.
             your job is to guide the farmer to decide the market which gives highest profit.
             On the basis of crop price in that market and the transportation cost required to reach that market.
-            in reasoning you can add some statistic reasoning so that it become more strong.
             
             marketData : {MarketData}
             transportationData : {transportation_data}
@@ -199,9 +212,10 @@ def getMarketSelectionConclusion(MarketData,transportation_data,sourceDistrict):
             
             output format : JSON
             suggested_market : <market> <price in that market ₹/Qtl>
-            reasoning
+            reasoning : explain why and how the suggested market gives the max profit.
             
             In output no any desclaimers or voage statements. in output Do not return marketData or transprotation data just return suggested_market reasoning.
+            output must be in json format.
     """
     data = get_data(Prompt)
     return data
@@ -391,12 +405,13 @@ def getIntelCropData(Commoditys, Year, Month, District, Area, Nitrogen, Potassiu
         }
     return IntelCroprecData
 
+
 # get coordinates
 def get_coordinates(subdistrict, district):
-    subdistrict = subdistrict.lower()
     district = district.lower()
-    # query = ${taluka}, ${district}, Maharashtra, India
-    query = f"{subdistrict}, {district}, Maharashtra"
+    subdistrict = get_subdistrict(subdistrict)
+    subdistrict = subdistrict.lower()
+    query = f"{subdistrict}, {district}, maharashtra"
     url = f"https://nominatim.openstreetmap.org/search?format=json&countrycodes=IN&addressdetails=1&q={query}"
     
     try:
@@ -423,7 +438,6 @@ def get_coordinates(subdistrict, district):
                     
                     # Check if the subdistrict and district match
                     if taluka_match and district_match and subdistrict.lower() in taluka_match.lower() and district.lower() in district_match.lower():
-                        print("ok")
                         return {"lat": float(item["lat"]), "lon": float(item["lon"])}
         
         # If no matching data is found
@@ -462,6 +476,7 @@ def fetch_fuel_prices(district):
 
 def calculateTransportationDistance(coords_source,fuel_prices,des_district,mileage):
     subdistricts = markets_data[des_district]
+    # print(subdistricts)
     transportation_data_all = {}
     transportation_data = {}
     for des_subdistrict in subdistricts:
@@ -493,6 +508,7 @@ def calculateTransportationDistance(coords_source,fuel_prices,des_district,milea
     return transportation_data_all,transportation_data
 
 def getTransportationData(src_subdistrict,src_district,des_district,milage):
+    # print(des_district)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future_coords_source = executor.submit(get_coordinates, src_subdistrict,src_district)
         future_fuel_prices = executor.submit(fetch_fuel_prices, src_district)
@@ -523,10 +539,11 @@ def marketPrice():
         Month = int(Month)
         milage = int(milage)
        
-        marketPriceData = marketPriceSeries(srcDistrict, Commodity, Year, Month)
+        marketPriceData = marketPriceSeries(desDistrict, Commodity, Year, Month)
+        # print(marketPriceData)
         transportation_data_all,transportation_data = getTransportationData(srcSubdistrict,srcDistrict,desDistrict,milage)
+        # print(transportation_data)
         conclusion = getMarketSelectionConclusion(marketPriceData,transportation_data,srcDistrict)
-        
         # print(conclusion)
         return jsonify({'data':marketPriceData,'transportationData':transportation_data_all,'conclusion':conclusion})
 
