@@ -1,0 +1,88 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FaTractor, FaUser, FaLeaf } from 'react-icons/fa';
+import '../css/CoversPage.css';
+
+const CoverPage = () => {
+  const [flipped, setFlipped] = useState(null);
+
+  return (
+    <div className="cover-container">
+      <div className="background-gradient"></div>
+
+      <motion.div 
+        className="content"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        {/* Header Section */}
+        <div className="header">
+          <FaLeaf className="logo-icon" />
+          <h1>AgriConnect <span>🌱</span></h1>
+          <p>Connecting Farmers with the World</p>
+        </div>
+
+        {/* Cards Container */}
+        <div className="cards-container">
+          {/* Farmer Card */}
+          <motion.div 
+            className={`card farmer ${flipped === 'farmer' ? 'flipped' : ''}`}
+            onMouseEnter={() => setFlipped('farmer')}
+            onMouseLeave={() => setFlipped(null)}
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="card-front">
+              <FaTractor className="card-icon" />
+              <h2>Farmer Login</h2>
+              <p>Direct from the fields</p>
+            </div>
+            <div className="card-back">
+                <Link to="/login/farmer">
+              <button className="login-btn farmer-btn">
+                Continue as Farmer
+              </button>
+              </Link>
+              <p>Access your farming dashboard</p>
+            </div>
+          </motion.div>
+
+          {/* User Card */}
+          <motion.div 
+            className={`card user ${flipped === 'user' ? 'flipped' : ''}`}
+            onMouseEnter={() => setFlipped('user')}
+            onMouseLeave={() => setFlipped(null)}
+            whileHover={{ scale: 1.05 }}
+          >
+            <div className="card-front">
+              <FaUser className="card-icon" />
+              <h2>User Login</h2>
+              <p>Fresh from the farm</p>
+            </div>
+            <div className="card-back">
+                <Link to="/login/user">
+              <button className="login-btn user-btn">
+                Continue as User
+              </button>
+              </Link>
+              <p>Explore farm-fresh products</p>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Watermark Section */}
+        <div className="watermark">
+          <p>Nourishing Lives, Cultivating Trust</p>
+          <div className="animated-leaves">
+            <FaLeaf className="leaf leaf1" />
+            <FaLeaf className="leaf leaf2" />
+            <FaLeaf className="leaf leaf3" />
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default CoverPage;

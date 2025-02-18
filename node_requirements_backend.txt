@@ -1,0 +1,8 @@
+jwt-decode
+express
+mongoose
+cors
+body-parser
+bcryptjs
+jsonwebtoken
+dotenv

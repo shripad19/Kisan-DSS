@@ -134,14 +134,16 @@ export default function IntelGovMarketPrice() {
               <div className="Priceresult_weather-body">
                 <div className="Priceresult_weather-section">
                   <div className="Priceresult_weather-item best">
-                    <h4>Optimal Harvesting Months</h4>
-                    <p className="value">Highest Price Month </p>
-                    <p className="month">{state.goldMonthIndex}</p>
+                    <p className="blink-dot sucess-dot"></p>
+                    <h4>📈 Optimal Selling Months</h4>
+                    <p className="value">Maximize profit by selling during peak price months.</p>
+                    <p className="month">{state.goldMonthIndex} - {new Date(0, state.goldMonthIndex - 1).toLocaleString('en-US', { month: 'long' })}</p>
                   </div>
                   <div className="Priceresult_weather-item worst">
-                    <h4>Risk Period</h4>
-                    <p className="value">Lowest Price Month</p>
-                    <p className="month">{state.silverMonthIndex}</p>
+                  <p className="blink-dot danger-dot"></p>
+                    <h4>⚠️ Risk Period</h4>
+                    <p className="value">Minimize losses by avoiding sales in low-price months.</p>
+                    <p className="month">{state.silverMonthIndex} - {new Date(0, state.silverMonthIndex - 1).toLocaleString('en-US', { month: 'long' })}</p>
                   </div>
                 </div>
                 <div className="Priceresult_weather-warning">
@@ -246,7 +248,7 @@ export default function IntelGovMarketPrice() {
         </div>
 
         <footer className="Priceresult_glass-footer">
-          <p>| © 2023 Kisan DSS. All rights reserved | </p>
+          <p>| © 2026 Kisan DSS. All rights reserved | </p>
         </footer>
       </div>
     </div>

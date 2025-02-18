@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../static/css/farmer_dashboard.css";
 
 import IntelGovMarketForm from "./IntelGovMarketForm";
 import IntelLocalMarketForm from "./IntelLocalMarketForm";
 
 export default function FarmerDashBoard() {
+
+  const navigate = useNavigate();
+
   const [commodity, setCommodity] = useState("");
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
@@ -20,6 +24,7 @@ export default function FarmerDashBoard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setData(null);
     setLoading(true);
     setError("");
 
@@ -54,11 +59,16 @@ export default function FarmerDashBoard() {
     console.log("Loading state changed:", loading);
   }, [loading]);
 
+  
+  const farmerAdminNavigation = ()=>{
+    navigate('/home-farmer');
+  }
+
   return (
     <div className="farmer-dashboard-root">
       <div id="cover_root">
         <div className="cover_container">
-          <h1 className="cover_heading">🛒 Agricultural Services Gateway</h1>
+          <h1 className="cover_heading">🌾 Agricultural Services Gateway</h1>
 
           <main className="farmer-dashboard-smart-container">
             {loading && (
@@ -249,7 +259,7 @@ export default function FarmerDashBoard() {
                 <br />
                 Direct digital marketplace connecting farmers with consumers.
               </p>
-              <button className="cover_access_button">Visit Marketplace</button>
+              <button onClick={farmerAdminNavigation} className="cover_access_button">Visit Marketplace</button>
             </div>
           </div>
         </div>

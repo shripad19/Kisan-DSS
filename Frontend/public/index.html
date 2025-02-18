@@ -19,37 +19,71 @@
     <title>kisan-DSS</title>
     <style>
       #google_translate_element {
-        position:absolute;
-        top:0.5rem;
-        right:0.5rem;
-        z-index: 9999;
-        background: #f8f9fa; /* Light gray background for a clean look */
-        padding: 8px 15px;
-        border-radius: 5px;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        width: 45px;
+        height: 45px;
+        background: #f8f9fa;
+        border-radius: 50%;
         box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
-        font-size: 14px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+        white-space: nowrap;
+        gap: 6px;
+        padding: 5px;
+        z-index: 1;
       }
-
+  
+      /* On Hover - Expand */
+      #google_translate_element:hover {
+        width: auto;
+        height: auto;
+        padding: 10px 15px;
+        border-radius: 10px;
+      }
+  
+      /* Hide Text Initially */
+      .translate-text {
+        display: none;
+        font-size: 14px;
+        color: #343a40;
+        font-weight: bold;
+      }
+  
+      /* Show Text & Dropdown When Hovering */
+      #google_translate_element:hover .translate-text {
+        display: inline-block;
+      }
+  
       #google_translate_element select {
         border: 1px solid #ced4da;
         border-radius: 4px;
         padding: 5px;
         font-size: 14px;
         cursor: pointer;
+        margin-left: 8px;
       }
-
+  
       .goog-te-gadget {
-        color: #343a40 !important; /* Dark text for readability */
+        display: none;
       }
-
+  
+      /* Show Google Translate Only When Hovering */
+      #google_translate_element:hover .goog-te-gadget {
+        display: inline-block;
+      }
     </style>
   </head>
   <body>
-    <div id="google_translate_element"></div>
+    <div id="google_translate_element">
+      <i class="fas fa-language"></i> 
+      <span class="translate-text">Translate</span>
+    </div>
     <div id="root"></div>
     <script type="text/javascript">
       function googleTranslateElementInit() {

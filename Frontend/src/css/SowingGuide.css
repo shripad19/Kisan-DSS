@@ -1,0 +1,88 @@
+body{
+    margin:0px;
+    padding: 0px;
+ }
+ .navsowingguide{
+     background-color:rgba(216, 166, 239, 0.2);
+     display:flex;
+ }
+ .navsowingguide .containernav{
+     display: flex;
+ }
+ 
+ .navsowingguide .back{
+     cursor: pointer;
+     display: flex;
+     width:100px;
+     height:50px;
+     margin:30px 50px auto auto;
+     text-decoration: none;
+     color:rgb(0, 161, 19);
+     font-family: cursive;
+     font-weight:500;
+     font-size:20px;
+     background-color:rgb(197, 197, 197);
+     align-items: center;
+     justify-content: center;
+ }
+ 
+ .navsowingguide a:hover{
+     background-color:rgb(238, 239, 240);
+ }
+ 
+ 
+ .navimg{
+     height:100px;
+     margin-top:20px;
+     margin-left:30px;
+     width:100px;
+ }
+ 
+ .navsowingguide p{
+     display: inline-block;
+     margin-left:20px;
+     margin-top:50px;
+     color:rgb(1, 147, 11);
+     font-family: sans-serif;
+     font-weight: 600;
+     font-size:25px;
+ }
+ .commodity{
+     margin: auto;
+     margin-top: 50px;
+     width:max-content;
+     height:max-content;
+     display: flex;
+     column-gap:50px;
+ }
+ 
+ .commodity .commoditycard{
+     height:300px;
+     width:15rem;
+ }
+ 
+ .commodity .commoditylogo{
+    height:200px;
+    border: 1px solid rgb(243, 242, 242);
+ }
+ .overviewofstate{
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top:70px;
+    margin-bottom: 100px;
+    height:500px;
+ }
+.prevyeargraph{
+    width:40%;
+    height: 100%;
+}
+.canvas{
+    max-width:500px;
+    max-height:400px;
+}
+.statemap{
+    width:40%;
+    height:100%;
+}

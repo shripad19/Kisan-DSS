@@ -1,0 +1,186 @@
+/* .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    z-index: 1000;
+    width: 350px;
+    text-align: center;
+  }
+  
+  .modal-dialog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    width: 100%;
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+   */
+
+
+
+
+
+
+
+
+
+
+   .cartcrops-container {
+    padding: 20px;
+  }
+  
+  .cartcrops-card {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cartcrops-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .cartcrops-card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .cartcrops-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .cartcrops-card-text {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .cartcrops-btn-danger,
+  .cartcrops-btn-success {
+    width: 48%;
+    padding: 8px 16px;
+    margin: 5px 1%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .cartcrops-btn-danger {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .cartcrops-btn-danger:hover {
+    background-color: #d32f2f;
+  }
+  
+  .cartcrops-btn-success {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .cartcrops-btn-success:hover {
+    background-color: #388e3c;
+  }
+  
+  .cartcrops-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .cartcrops-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    width: 400px;
+  }
+  
+  .cartcrops-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .cartcrops-modal-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .cartcrops-modal-body {
+    margin-bottom: 15px;
+  }
+  
+  .cartcrops-modal-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .cartcrops-modal-footer button {
+    padding: 8px 15px;
+    border-radius: 4px;
+  }
+  
+  .cartcrops-card .btn-close {
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+  }
+  
+  .cartcrops-card .btn-close:hover {
+    color: #f44336;
+  }
+  
+  @media (max-width: 768px) {
+    .cartcrops-card {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .cartcrops-btn-danger,
+    .cartcrops-btn-success {
+      width: 48%;
+      padding: 8px 16px;
+    }
+  }
+  

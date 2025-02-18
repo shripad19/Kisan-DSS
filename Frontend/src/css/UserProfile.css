@@ -1,0 +1,36 @@
+.user-profile-container {
+  text-align: center;
+  margin-top: 40px;
+  font-family: Arial, sans-serif;
+  padding: 20px; /* Add padding for better spacing */
+}
+
+.profile-info {
+  text-align: left;
+  max-width: 600px;
+  margin: 20px auto;
+  font-size: 18px;
+  background: #f9f9f9; /* Light background for better contrast */
+  padding: 20px; /* Add padding inside the box */
+  border-radius: 8px; /* Rounded corners for a modern look */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+}
+
+.profile-info p {
+  margin: 10px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+h2 {
+  color: darkgreen;
+  font-size: 24px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .profile-info {
+      width: 90%;
+      font-size: 16px;
+  }
+}

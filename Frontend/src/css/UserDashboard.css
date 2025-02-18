@@ -1,0 +1,414 @@
+/* Modal Styles */
+.UserDashboard_modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.UserDashboard_modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.UserDashboard_modal h3 {
+    margin-bottom: 1rem;
+    color: #2d5a27;
+}
+
+.UserDashboard_modalQuantity {
+    margin: 1rem 0;
+}
+
+.UserDashboard_modalQuantity label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.UserDashboard_modalQuantity input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.UserDashboard_modalActions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.UserDashboard_modalActions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.UserDashboard_modalActions button:first-child {
+    background: #e0e0e0;
+}
+
+.UserDashboard_modalActions button:first-child:hover {
+    background: #ccc;
+}
+
+.UserDashboard_modalActions button:last-child {
+    background: #2d5a27;
+    color: white;
+}
+
+.UserDashboard_modalActions button:last-child:hover {
+    background: #1f441a;
+}
+
+
+
+
+
+
+
+/* UserDashboard.css */
+.UserDashboard_container {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navigation Bar */
+.UserDashboard_navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.UserDashboard_navLeft {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+}
+
+.UserDashboard_logo {
+    font-size: 1.8rem;
+    color: #2d5a27;
+    font-weight: 700;
+}
+
+.UserDashboard_navLinks {
+    display: flex;
+    gap: 2rem;
+}
+
+.UserDashboard_navLinks a {
+    color: #4a4a4a;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.UserDashboard_navLinks a:hover {
+    color: #2d5a27;
+}
+
+.UserDashboard_navRight {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.UserDashboard_searchBar {
+    position: relative;
+    width: 400px;
+}
+
+.UserDashboard_searchBar input {
+    width: 100%;
+    padding: 0.8rem 2.5rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.UserDashboard_searchBar input:focus {
+    outline: none;
+    border-color: #88b04b;
+    box-shadow: 0 0 15px rgba(136, 176, 75, 0.2);
+}
+
+.UserDashboard_searchIcon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b6b6b;
+}
+
+.UserDashboard_navIcon {
+    font-size: 1.5rem;
+    color: #4a4a4a;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-right: 15px;
+}
+
+.UserDashboard_navIcon:hover {
+    color: #2d5a27;
+}
+
+/* Category Filters */
+.UserDashboard_categoryFilters {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 5%;
+    background: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.UserDashboard_filterBtn.active {
+    background: #2d5a27;
+    color: white;
+    border-color: #2d5a27;
+}
+
+.UserDashboard_filterBtn {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.UserDashboard_filterBtn.active {
+    background: #2d5a27;
+    color: white;
+    border-color: #2d5a27;
+}
+
+.UserDashboard_filterBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.UserDashboard_filterIcon {
+    margin-left: auto;
+    font-size: 1.2rem;
+    color: #4a4a4a;
+    cursor: pointer;
+}
+
+/* Products Grid */
+.UserDashboard_productsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3.5rem; 
+    padding: 2rem 5%;
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
+.UserDashboard_productCard {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%; /* Ensure cards take full width of their grid cell */
+}
+
+.UserDashboard_productCard:hover {
+    transform: translateY(-3px);
+}
+
+.UserDashboard_productImage {
+    height: 200px; /* Increased height for better image visibility */
+    width: 100%;
+    background: #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 0.5rem; /* Reduced margin */
+    object-fit: cover; /* Ensure the image fits well */
+}
+
+.cropname-cardtitle{
+    font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.UserDashboard_price {
+    color: #2d5a27;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0.25rem 0; /* Reduced margin */
+}
+
+.UserDashboard_productInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; /* Reduced gap between items */
+    color: #6b6b6b;
+    font-size: 0.9rem;
+    margin: 0.25rem 0; /* Reduced margin */
+}
+
+.UserDashboard_addToCart {
+    width: 100%;
+    padding: 0.8rem;
+    background: #2d5a27;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 0.5rem; /* Reduced margin */
+}
+
+.UserDashboard_productText{
+    font-size: 14px;
+  margin: 5px 0;
+  text-align: center;
+}
+
+.UserDashboard_addToCart:hover {
+    background: #1f441a;
+}
+
+.UserDashboard_sectionHeading {
+    margin-left: 100px;
+}
+
+/* Footer Styles */
+.UserDashboard_footer {
+    background: #1a4721;
+    color: white;
+    padding: 3rem 5%;
+    margin-top: 4rem;
+}
+
+.UserDashboard_footerContent {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.UserDashboard_footerSection {
+    margin-bottom: 2rem;
+}
+
+.UserDashboard_footerSection h4 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #f5d76e;
+}
+
+.UserDashboard_footerSection p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin: 0.5rem 0;
+}
+
+.UserDashboard_footerSection ul {
+    list-style: none;
+    padding: 0;
+}
+
+.UserDashboard_footerSection ul li {
+    margin: 0.8rem 0;
+}
+
+.UserDashboard_footerSection ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.UserDashboard_footerSection ul li a:hover {
+    color: #f5d76e;
+}
+
+.UserDashboard_socialIcons {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.UserDashboard_socialIcons svg {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.UserDashboard_socialIcons svg:hover {
+    color: #f5d76e;
+    transform: translateY(-3px);
+}
+
+.UserDashboard_footerBottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    margin-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .UserDashboard_navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .UserDashboard_navLeft {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .UserDashboard_navLinks {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .UserDashboard_searchBar {
+        width: 100%;
+    }
+
+    .UserDashboard_productsGrid {
+        grid-template-columns: repeat(2, 1fr); /* Display 2 cards per row on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .UserDashboard_productsGrid {
+        grid-template-columns: 1fr; /* Display 1 card per row on very small screens */
+    }
+}

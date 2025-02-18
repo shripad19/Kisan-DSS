@@ -1,0 +1,38 @@
+.transaction-container {
+    padding: 24px;
+    font-family: Arial, sans-serif;
+}
+
+.transaction-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.transaction-table th, 
+.transaction-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.transaction-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.transaction-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 16px;
+    color: #888;
+}

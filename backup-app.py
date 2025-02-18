@@ -20,16 +20,22 @@ CORS(app)
 
 #loading models
 try:
+    # Yield prediction model and preprocessor
+    yield_model = pickle.load(open('models/cropyield/model.pkl', 'rb'))
+    yield_preprocessor = pickle.load(open('models/cropyield/preprocessor.pkl', 'rb'))
     # WPI model and preprocessor
     wpi_model = pickle.load(open('models/wpi/model.pkl', 'rb'))
     wpi_preprocessor = pickle.load(open('models/wpi/preprocessor.pkl', 'rb'))
     # Market price model
     market_price_model = pickle.load(open('models/marketprice/model.pkl', 'rb'))
     market_price_preprocessor = pickle.load(open('models/marketprice/preprocessor.pkl', 'rb'))
-     # rainfall prediction model and preprocessor (Division Wise)
+     # rainfall prediction model and preprocessor
     rainfall_model = pickle.load(open('models/rainfall/model.pkl', 'rb'))
     rainfall_preprocessor = pickle.load(open('models/rainfall/preprocessor.pkl', 'rb'))
-   
+    # temperature model and preprocessor
+    temperature_model = pickle.load(open('models/temperature/model.pkl', 'rb'))
+    temperature_preprocessor = pickle.load(open('models/temperature/preprocessor.pkl', 'rb'))
+    
 except FileNotFoundError as e:
     raise FileNotFoundError(f"Required file missing: {e}")
 
@@ -213,7 +219,7 @@ def getMarketSelectionConclusion(MarketData,transportation_data,sourceDistrict):
             sourceDistrict : {sourceDistrict}
             
             output format : JSON
-            suggested_market : <market> <price in that market> ₹/Qtl
+            suggested_market : <market> <price in that market ₹/Qtl>
             reasoning : explain why and how the suggested market gives the max profit.
             
             In output no any desclaimers or voage statements. in output Do not return marketData or transprotation data just return suggested_market reasoning.
@@ -918,107 +924,43 @@ def IntelWPI():
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 
-# @app.route('/intel-build-decision',methods=['POST'])
-# def getDecision():
-#     if request.method == 'POST':
-#         data = request.get_json()
-#         Commodity = data.get('commodity')
-#         Year = data.get('year')
-#         Month = data.get('month')
-#         storageAvailability = data.get('storageAvailability')
-        
-#         Year = int(Year)
-#         Month = int(Month)
-        
-#         Rainfall = getIndiaRainfallMonthly(Year,Month)
-#         print(Rainfall)
-#         govMarketPrice = wpiPricePrediction(Commodity,Month,Year,Rainfall)
-
-#         marketPriceData = getMarketPriceData(Commodity,Year,Month)
-      
-#         highestLocalMarketPrice = -1 
-#         localMarketName = None
-#         districtName = None
-
-#         for district, market_data in marketPriceData.items():
-#             for market, price in market_data.items():
-#                 if price > highestLocalMarketPrice:
-#                     highestLocalMarketPrice = price
-#                     localMarketName = market
-#                     districtName = district
-
-#         decision = getSellingDecision(Commodity,highestLocalMarketPrice,localMarketName,districtName,govMarketPrice,storageAvailability)
-        
-#         return jsonify({
-#                         'decision':decision,
-#                         'govMarketPrice':govMarketPrice,
-#                         'highestLocalMarketPrice':highestLocalMarketPrice,
-#                         'localMarketName':localMarketName,
-#                         'districtName':districtName})
-
-@app.route('/intel-build-decision', methods=['POST'])
+@app.route('/intel-build-decision',methods=['POST'])
 def getDecision():
     if request.method == 'POST':
-        try:
-            # Parse incoming JSON data
-            data = request.get_json()
+        data = request.get_json()
+        Commodity = data.get('commodity')
+        Year = data.get('year')
+        Month = data.get('month')
+        storageAvailability = data.get('storageAvailability')
+        
+        Year = int(Year)
+        Month = int(Month)
+        
+        Rainfall = getIndiaRainfallMonthly(Year,Month)
+        print(Rainfall)
+        govMarketPrice = wpiPricePrediction(Commodity,Month,Year,Rainfall)
 
-            # Validate required fields
-            required_fields = ['commodity', 'year', 'month', 'storageAvailability']
-            for field in required_fields:
-                if field not in data:
-                    return jsonify({"error": f"Missing required field: {field}"}), 400
+        marketPriceData = getMarketPriceData(Commodity,Year,Month)
+      
+        highestLocalMarketPrice = -1 
+        localMarketName = None
+        districtName = None
 
-            # Extract values from data
-            Commodity = data.get('commodity')
-            Year = int(data.get('year'))
-            Month = int(data.get('month'))
-            storageAvailability = data.get('storageAvailability')
+        for district, market_data in marketPriceData.items():
+            for market, price in market_data.items():
+                if price > highestLocalMarketPrice:
+                    highestLocalMarketPrice = price
+                    localMarketName = market
+                    districtName = district
 
-            # Get rainfall data
-            Rainfall = getIndiaRainfallMonthly(Year, Month)
-            if not Rainfall:
-                return jsonify({"error": "Failed to retrieve rainfall data"}), 500
-
-            # Get government market price prediction
-            govMarketPrice = wpiPricePrediction(Commodity, Month, Year, Rainfall)
-            if govMarketPrice is None:
-                return jsonify({"error": "Failed to predict government market price"}), 500
-
-            # Get market price data for local markets
-            marketPriceData = getMarketPriceData(Commodity, Year, Month)
-            if not marketPriceData:
-                return jsonify({"error": "Failed to retrieve market price data"}), 500
-
-            # Find the highest local market price and associated district and market
-            highestLocalMarketPrice = -1 
-            localMarketName = None
-            districtName = None
-
-            for district, market_data in marketPriceData.items():
-                for market, price in market_data.items():
-                    if price > highestLocalMarketPrice:
-                        highestLocalMarketPrice = price
-                        localMarketName = market
-                        districtName = district
-
-            # Check if any valid market price was found
-            if highestLocalMarketPrice == -1:
-                return jsonify({"error": "No valid market price found in local markets"}), 500
-
-            # Get selling decision
-            decision = getSellingDecision(Commodity, highestLocalMarketPrice, localMarketName, districtName, govMarketPrice, storageAvailability)
-            
-            return jsonify({
-                'decision': decision,
-                'govMarketPrice': govMarketPrice,
-                'highestLocalMarketPrice': highestLocalMarketPrice,
-                'localMarketName': localMarketName,
-                'districtName': districtName
-            })
-
-        except Exception as e:
-            return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+        decision = getSellingDecision(Commodity,highestLocalMarketPrice,localMarketName,districtName,govMarketPrice,storageAvailability)
+        
+        return jsonify({
+                        'decision':decision,
+                        'govMarketPrice':govMarketPrice,
+                        'highestLocalMarketPrice':highestLocalMarketPrice,
+                        'localMarketName':localMarketName,
+                        'districtName':districtName})
 
 
 if __name__ == '__main__':

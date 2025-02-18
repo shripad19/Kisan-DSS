@@ -1,0 +1,111 @@
+/* styles.css */
+
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* Centered Form Styles */
+.auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.auth-container h2 {
+  margin-bottom: 20px;
+}
+
+.auth-container input,
+.auth-container select,
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.auth-container button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-container button:hover {
+  background: #45a049;
+}
+
+.auth-container p {
+  cursor: pointer;
+  color: #007bff;
+}
+
+/* Farmer Dashboard Styles */
+.farmer-container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.farmer-container h2 {
+  text-align: center;
+}
+
+.farmer-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.farmer-container input,
+.farmer-container button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.farmer-container button {
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.farmer-container button:hover {
+  background: #218838;
+}
+
+/* Crop List Styles */
+.crop-list {
+  margin-top: 20px;
+}
+
+.crop-list li {
+  list-style: none;
+  background: #f8f8f8;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.crop-list li span {
+  font-weight: bold;
+}
+

@@ -1,0 +1,60 @@
+body{
+    margin: 0px;
+    padding: 0px;
+}
+.navCropDistribution{
+    height:100px;
+    width:100%;
+    background-color:rgba(169, 118, 181, 0.2);
+    margin:0px;
+    padding:0px;
+    display: flex;
+}
+.navCropDistribution a{
+    cursor: pointer;
+    display: flex;
+    width:100px;
+    height:50px;
+    margin:30px 100px auto auto;
+    text-decoration: none;
+    color:rgb(0, 161, 19);
+    font-family: cursive;
+    font-weight:500;
+    font-size:20px;
+    background-color:rgb(197, 197, 197);
+    align-items: center;
+    justify-content: center;
+}
+
+.navCropDistribution a:hover{
+    background-color:rgb(238, 239, 240);
+}
+
+.navCropDistribution h1{
+    margin:0px;
+    padding:0px;
+}
+.containerCropDistribution{
+    display: inline-block;
+    margin-top:25px;
+    margin-left:50px;
+    color:green;
+    font-size:30px;
+}
+
+.crop_sowingdata_bar{
+    width:80%;
+    margin:60px auto auto auto;
+}
+.graphBlock{
+    width:100%;
+    margin-bottom:9%;
+}
+
+.graphs{
+    width:auto;
+    height:350px;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 4rem;
+}

@@ -111,9 +111,8 @@ export default function IntelLocalMarketForm({ setLocalMarketForm }) {
     <div className="intel-price-form-root">
       <div className="intel-price-form-container">
         <header className="intel-price-form-header">
-          Local Market Prediction
-          <button onClick={()=>setLocalMarketForm(false)} className="close-form-price-prediction">Close</button>
-        </header>
+          Intel Market Guide <i className="intel-form-header-subtitle"> <strong>&ndash; Maximize Your Profit</strong></i>
+          </header>
         <div className="intel-price-main-form">
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
@@ -253,14 +252,17 @@ export default function IntelLocalMarketForm({ setLocalMarketForm }) {
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
 
-            <div className="mb-4">
+            <div className="mb-4 intel-form-btn-block">
               {loading && (
                 <div className="intel-gov-market-form-loader-div"></div>
               )}
               {!loading && (
+                <>
                 <button type="submit" className="btn btn-success">
                   Submit
                 </button>
+                 <button onClick={()=>setLocalMarketForm(false)} className="close-form-price-prediction">Close</button>
+                 </>
               )}
             </div>
           </form>

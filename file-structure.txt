@@ -1,0 +1,41 @@
+Backend-Flask
+    models
+        MarketPrice
+           model.pkl
+           preprocessor.pkl
+        Rainfall
+           model.pkl
+           preprocessor.pkl
+        WPI
+            model.pkl
+           preprocessor.pkl
+    .env
+       GEMINI_API_KEY
+       DAILY_FUEL_DATA_KEY
+    app.py
+
+Backend-Node
+    models
+        crop.js
+        farmer.js
+        user.js
+    .env
+        JWT_SECRET
+    server.js
+
+Frontend
+    public
+        index.html
+    src
+        components
+        css
+        static
+            css
+            CropImages
+        app.js
+        index.js
+
+node_requirements_backend.txt
+node_requirements_fontend.txt
+pip_requirements_backend.txt
+file-structure.txt

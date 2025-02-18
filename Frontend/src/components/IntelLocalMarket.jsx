@@ -55,7 +55,7 @@ export default function IntelLocalMarket() {
         // Create a new market data object
         const marketData = {
           name: marketName,
-          price: price+" ₹/Qtl",
+          price: price + " ₹/Qtl",
           distance: transportation.distance + " Km",
           duration: transportation.duration + " hours",
           fuelPrice: transportation.fuel_prices + "₹/liter",
@@ -122,6 +122,18 @@ export default function IntelLocalMarket() {
 
   return (
     <div className="intel-local-market-root">
+      <nav className="Priceresult_glass-nav">
+        <div className="Priceresult_nav-content">
+          <a href="/farmer-dashboard" className="Priceresult_logo">
+            Kisan DSS
+          </a>
+          <div className="Priceresult_nav-links">
+            <a href="/farmer-dashboard" className="Priceresult_nav-link">
+              <i className="fas fa-home"></i> Home
+            </a>
+          </div>
+        </div>
+      </nav>
       <div className="intel-local-market-container">
         <div className="intel-local-market-header">
           <h1>Local Market Analysis Dashboard</h1>
@@ -149,6 +161,9 @@ export default function IntelLocalMarket() {
           <Bar data={chartData} options={chartOptions} />
         </div>
       </div>
+      <footer className="Priceresult_glass-footer">
+        <p>| © 2026 Kisan DSS. All rights reserved | </p>
+      </footer>
     </div>
   );
 }
@@ -159,12 +174,7 @@ const APMCMarketCard = ({ market }) => {
       {/* <div className="intel-local-market-apmc-code">{market.apmcCode}</div> */}
       <div className="intel-local-market-name">
         <span>🏢</span>
-        <div>
-          {market.name}
-          {/* <div className="intel-local-market-location">
-            📍 {market.location}
-          </div> */}
-        </div>
+        <div>{market.name}</div>
       </div>
 
       <div className="intel-local-market-details">

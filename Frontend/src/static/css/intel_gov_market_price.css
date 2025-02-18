@@ -38,8 +38,10 @@
     padding: 1rem 2rem;
     margin: 1rem;
     position: sticky;
+    border-radius:10px;
     top: 0;
     z-index: 1000;
+    border-left: 4px solid var(--primary-color);
 }
 
 .Priceresult_nav-content {
@@ -130,8 +132,14 @@
     text-align: center;
 }
 
-.Priceresult_weather-item.best { background: #e8f5e9; }
-.Priceresult_weather-item.worst { background: #ffebee; }
+.Priceresult_weather-item.best {
+    position: relative;
+     background: #e8f5e9; 
+    }
+.Priceresult_weather-item.worst {
+    position: relative;
+     background: #ffebee; 
+    }
 
 .Priceresult_weather-warning {
     background: #fff3e0;
@@ -165,7 +173,7 @@
 
 .Priceresult_crop-image {
     width: 100%;
-    height: 250px;
+    height:50vh;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
@@ -386,4 +394,51 @@
         align-items: flex-start;
         gap: 1rem;
     }
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.blink-dot{
+    position: absolute;
+    right:1rem;
+    top:1rem;
+    width:0.8rem;
+    height:0.8rem;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+.sucess-dot{
+    background-color: var(--primary-color);
+    color:var(--primary-color);
+}
+
+.danger-dot{
+    background-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.value{
+    color:rgb(107, 107, 108);
+}
+
+.month{
+    font-size:25px;
+    font-weight: 700;
+}
+
+.fa-cloud-rain{
+    padding-right:0.5rem;
 }

@@ -44,12 +44,10 @@ export default function IntelGovMarketForm({setGovMarketForm}) {
     <div className="intel-price-form-root">
       <div className="intel-price-form-container">
         <header className="intel-price-form-header">
-          Crop price based on WPI and MSP
-          <button onClick={()=>setGovMarketForm(false)} className="close-form-price-prediction">Close</button>
-        
+        Intel Market Insights <i className="intel-form-header-subtitle"><strong> &ndash; Sell for Profit</strong></i>
           </header>
         <div className="intel-price-main-form">
-          <form onSubmit={handleSubmit}>
+          <form className="intel-form" onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Commodity</label>
               <select
@@ -92,12 +90,15 @@ export default function IntelGovMarketForm({setGovMarketForm}) {
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
 
-            <div className="mb-4">
+            <div className="mb-4 intel-form-btn-block">
               {loading && (<div className="intel-gov-market-form-loader-div"></div>)}
               {!loading && (
+                <>
               <button type="submit" className="btn btn-success">
                 Submit
               </button>
+               <button onClick={()=>setGovMarketForm(false)} className="close-form-price-prediction">Close</button>
+               </>
               )}
             </div>
           </form>
