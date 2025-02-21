@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../css/auth.css";
 
-export default function SignupFarmer() {
+export default function SignupFarmer({setIsLogin}) {
+ 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [state, setState] = useState("");
@@ -29,12 +30,13 @@ export default function SignupFarmer() {
       if (!response.ok) {
         throw new Error(data.message || "Signup failed");
       }
-
-      navigate("/login/farmer"); // Redirect to login page after successful signup
+      setIsLogin(true);
     } catch (err) {
       setError(err.message);
     }
   };
+
+  // const handleLogin
 
   return (
     <div className="auth-root">
@@ -118,7 +120,7 @@ export default function SignupFarmer() {
           <button type="submit">Sign Up</button>
         </form>
         <p>
-          Already have an account? <Link to="/login/farmer">Login</Link>
+          Already have an account? <Link onClick={()=>setIsLogin(true)} >Login</Link>
         </p>
       </div>
     </div>

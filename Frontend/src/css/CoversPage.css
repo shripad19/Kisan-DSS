@@ -5,7 +5,7 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #2c5f2d 0%, #97bc62 100%);
+    background: linear-gradient(145deg, #0f4910 0%, #62bc6f 100%);
 }
 
 .background-gradient {
@@ -24,7 +24,7 @@
 }
 
 .header {
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 .header h1 {
@@ -132,7 +132,7 @@ p {
 }
 
 .watermark {
-    margin-top: 4rem;
+   margin-top: 1rem;
     opacity: 0.8;
 }
 
@@ -144,23 +144,32 @@ p {
 
 .leaf {
     position: absolute;
+    margin: auto;
     opacity: 0.6;
     animation: float 4s infinite;
 }
 
 .leaf1 {
-    left: 45%;
+    left: 39%;
     animation-delay: 0s;
 }
 
 .leaf2 {
-    left: 40%;
+    left: 45%;
     animation-delay: 1s;
 }
 
 .leaf3 {
     left: 50%;
     animation-delay: 2s;
+}
+.leaf4{
+    left:55%;
+    animation-delay: 3s;
+}
+.leaf5{
+    left:60%;
+    animation-delay: 4s;
 }
 
 @keyframes float {

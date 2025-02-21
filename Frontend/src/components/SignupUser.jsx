@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../css/auth.css";
 
-export default function SignupUser() {
+export default function SignupUser({setIsLogin}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,8 +31,8 @@ export default function SignupUser() {
       if (!response.ok) {
         throw new Error(data.message || "Signup failed");
       }
-
-      navigate("/login/user"); // Redirect to login page after successful signup
+      setIsLogin(true);
+      // navigate("/login/user"); // Redirect to login page after successful signup
     } catch (err) {
       setError(err.message);
     }
@@ -147,7 +147,7 @@ export default function SignupUser() {
         <button type="submit">Sign Up</button>
       </form>
       <p>
-        Already have an account? <Link to="/login/user">Login</Link>
+        Already have an account? <Link onClick={()=>setIsLogin(true)}>Login</Link>
       </p>
     </div>
     </div>

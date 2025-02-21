@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../css/auth.css";
 
-export default function LoginFarmer() {
+import SignupFarmer from "./SignupFarmer";
+
+export default function LoginFarmer({setIsLogin}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // State to handle loading during login
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -83,7 +85,8 @@ export default function LoginFarmer() {
         </button>
       </form>
       <p>
-        Don't have an account? <Link to="/signup/farmer">Sign Up</Link>
+        Don't have an account? 
+        <Link onClick={()=>setIsLogin(false)}>Sign Up</Link>
       </p>
     </div>
     </div>

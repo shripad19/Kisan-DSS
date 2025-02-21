@@ -4,11 +4,19 @@ import { Link } from 'react-router-dom';
 import { FaTractor, FaUser, FaLeaf } from 'react-icons/fa';
 import '../css/CoversPage.css';
 
+import AuthComponents from './AuthComponent';
+const { AuthComponentUser, AuthComponentFarmer } = AuthComponents;
+
 const CoverPage = () => {
   const [flipped, setFlipped] = useState(null);
 
+  const [showAuthFarmer, setShowAuthFarmer] = useState(false);
+  const [showAuthUser, setShowAuthUser] = useState(false);
+ 
   return (
     <div className="cover-container">
+       {showAuthFarmer && <AuthComponentFarmer onClose={() => setShowAuth(false)} />}
+       {showAuthUser && <AuthComponentUser onClose={() => setShowAuth(false)} />}
       <div className="background-gradient"></div>
 
       <motion.div 
@@ -17,9 +25,10 @@ const CoverPage = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
+        
         {/* Header Section */}
         <div className="header">
-          <FaLeaf className="logo-icon" />
+          {/* <FaLeaf className="logo-icon" /> */}
           <h1>AgriConnect <span>🌱</span></h1>
           <p>Connecting Farmers with the World</p>
         </div>
@@ -39,11 +48,11 @@ const CoverPage = () => {
               <p>Direct from the fields</p>
             </div>
             <div className="card-back">
-                <Link to="/login/farmer">
-              <button className="login-btn farmer-btn">
+                {/* <Link to="/login/farmer"> */}
+              <button onClick={() => setShowAuthFarmer(true)} className="login-btn farmer-btn">
                 Continue as Farmer
               </button>
-              </Link>
+              {/* </Link> */}
               <p>Access your farming dashboard</p>
             </div>
           </motion.div>
@@ -61,11 +70,11 @@ const CoverPage = () => {
               <p>Fresh from the farm</p>
             </div>
             <div className="card-back">
-                <Link to="/login/user">
-              <button className="login-btn user-btn">
+                {/* <Link to="/login/user"> */}
+              <button onClick={()=>setShowAuthUser(true)} className="login-btn user-btn">
                 Continue as User
               </button>
-              </Link>
+              {/* </Link> */}
               <p>Explore farm-fresh products</p>
             </div>
           </motion.div>
@@ -78,6 +87,8 @@ const CoverPage = () => {
             <FaLeaf className="leaf leaf1" />
             <FaLeaf className="leaf leaf2" />
             <FaLeaf className="leaf leaf3" />
+            <FaLeaf className="leaf leaf4" />
+            <FaLeaf className="leaf leaf5" />
           </div>
         </div>
       </motion.div>

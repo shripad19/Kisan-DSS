@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../css/auth.css";
 
-export default function LoginUser() {
+export default function LoginUser({setIsLogin}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -83,7 +83,7 @@ export default function LoginUser() {
         </button>
       </form>
       <p>
-        Don't have an account? <Link to="/signup/user">Sign Up</Link>
+        Don't have an account? <Link onClick={()=>setIsLogin(false)} >Sign Up</Link>
       </p>
     </div>
     </div>
