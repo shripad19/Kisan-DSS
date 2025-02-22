@@ -145,7 +145,7 @@ export default function IntelLocalMarket() {
         </div>
         {state?.conclusion && (
           <div className="intel-local-market-commodity-container">
-            <div className="conclusion">
+            <div className="conclusion-market">
               <h3>Recommended Market : {state.conclusion.suggested_market}</h3>
               <p className="reasoning-text">{state.conclusion.reasoning}</p>
             </div>

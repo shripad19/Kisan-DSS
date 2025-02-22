@@ -83,6 +83,21 @@ def get_data(Prompt):
         print("Error:", e)
         return None
 
+def get_data_gov(Prompt):
+    response = gemini_response(Prompt)
+    try:
+        json_string = response.text.strip()
+        json_string = re.sub(r"```(?:json)?\s*", "", json_string)
+        json_string = re.sub(r"```", "", json_string)
+        json_data = json.loads(json_string)
+        return json_data
+    
+    except json.JSONDecodeError as e:
+        print("Error parsing JSON:", e)
+        return None
+    except Exception as e:
+        print("Error:", e)
+        return None
 
 # Crop MSP and Average Price Dictionary (Prices in INR per Quintal)
 commodity_price = {
@@ -482,7 +497,6 @@ def getIntelCropData(Commoditys, Year, Month, District, Area, Nitrogen, Potassiu
     return IntelCroprecData
 
 
-coordinate_cache = {}
 
 # get coordinates
 # def get_coordinates(subdistrict, district):
@@ -529,6 +543,8 @@ coordinate_cache = {}
 #         print(f"Failed to parse JSON: {e}")
 #         print("Response:", response.text)
 #         return None
+
+coordinate_cache = {}
 
 def get_coordinates(subdistrict, district):
     district = district.lower()
@@ -605,7 +621,6 @@ def get_coordinates(subdistrict, district):
 #     except Exception as e:
 #         print(f"Unexpected error: {e}")
 #         return None
-import requests
 
 # Cache to store OSRM distances
 distance_cache = {}
@@ -1011,14 +1026,11 @@ def IntelCropRec():
     
 @app.route('/intel-gov-scheme', methods=['POST'])   
 def getGovSchemeData():
-    print("get request")
     data = request.get_json()
     commodity = data.get('commodity')
-    print(commodity)
     Prompt = f"""Provide information about 3 Indian government schemes related to {commodity} farming in JSON format. The JSON should be an array of objects. Each object should have the following keys: 'scheme_name', 'purpose', and 'benefits' (which should be an array of strings). do not write the disclaimer or extra information only json data of goverment scheme in specified format"""
-    goverment_data = get_data(Prompt)
-    print(goverment_data)
-    return jsonify({'data':goverment_data})
+    goverment_data = get_data_gov(Prompt)
+    return jsonify({'govSchemeData':goverment_data})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

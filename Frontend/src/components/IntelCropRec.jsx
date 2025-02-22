@@ -4,44 +4,41 @@ import { useNavigate } from "react-router-dom";
 import "../static/css/intel-crop-rec.css";
 
 export default function IntelCropRec() {
-  const [input, setInput] = useState(""); // To manage the input field value
-  const [crops, setCrops] = useState([]); // To store the list of crops
-  const [year, setYear] = useState(""); // To manage the year input
-  const [month, setMonth] = useState(""); // To manage the month select
-  const [district, setDistrict] = useState(""); // To manage the district select
-  const [area, setArea] = useState(""); // To manage the cultivation area
-  const [fertilizer, setFertilizer] = useState(""); // To manage the fertilizer select
-  const [nitrogen, setNitrogen] = useState(""); // To manage nitrogen input
-  const [phosphorus, setPhosphorus] = useState(""); // To manage phosphorus input
+  const [input, setInput] = useState(""); 
+  const [crops, setCrops] = useState([]); 
+  const [year, setYear] = useState(""); 
+  const [month, setMonth] = useState(""); 
+  const [district, setDistrict] = useState(""); 
+  const [area, setArea] = useState(""); 
+  const [fertilizer, setFertilizer] = useState(""); 
+  const [nitrogen, setNitrogen] = useState(""); 
+  const [phosphorus, setPhosphorus] = useState(""); 
   const [potassium, setPotassium] = useState("");
   const [pH, setPH] = useState("");
   const [soilColor, setSoilColor] = useState("");
 
-  const [loading, setLoading] = useState(false); // To manage the loading state
+  const [loading, setLoading] = useState(false); 
 
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
-    setInput(e.target.value); // Update the input field value
+    setInput(e.target.value); 
   };
 
   const handleKeyPress = (e) => {
-    // If the user presses Enter (keyCode 13)
     if (e.key === "Enter" && input.trim() !== "") {
-      // Add the crop to the list if it's not empty
       setCrops((prevCrops) => [...prevCrops, input.trim()]);
-      setInput(""); // Clear the input field after adding
+      setInput("");
     }
   };
 
   const handleDeleteCrop = (index) => {
-    // Remove crop from the list when clicked
     setCrops(crops.filter((crop, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
     const formData = {
       crops,
@@ -283,21 +280,13 @@ export default function IntelCropRec() {
               />
             </div>
           </div>
-          {/* <div className="btn-block">
-            <button id="predict_btn" className="submitbtn" type="submit">
-              Submit
-            </button>
-            {loading && <div id="loader" className="loader"></div>}
-          </div> */}
-           {/* Loader Animation */}
+          
            {loading && (
-              <div className="loader-container">
+              <div className="loader-container-crop-rec">
               <div className="spinner"></div>
               <p>Processing...</p>
             </div>
-          )}
-
-          {/* Submit Button (Only Show When Not Loading) */}
+          )} 
           {!loading && (
             <div className="btn-block">
               <button id="predict_btn" className="submitbtn" type="submit">
