@@ -20,6 +20,9 @@ CORS(app)
 
 #loading models
 try:
+    # Yield prediction model and preprocessor
+    yield_model = pickle.load(open('models/cropyield/model.pkl', 'rb'))
+    yield_preprocessor = pickle.load(open('models/cropyield/preprocessor.pkl', 'rb'))
     # WPI model and preprocessor
     wpi_model = pickle.load(open('models/wpi/model.pkl', 'rb'))
     wpi_preprocessor = pickle.load(open('models/wpi/preprocessor.pkl', 'rb'))
@@ -29,6 +32,10 @@ try:
      # rainfall prediction model and preprocessor (Division Wise)
     rainfall_model = pickle.load(open('models/rainfall/model.pkl', 'rb'))
     rainfall_preprocessor = pickle.load(open('models/rainfall/preprocessor.pkl', 'rb'))
+     # temperature model and preprocessor
+    temperature_model = pickle.load(open('models/temperature/model.pkl', 'rb'))
+    temperature_preprocessor = pickle.load(open('models/temperature/preprocessor.pkl', 'rb'))
+    
    
 except FileNotFoundError as e:
     raise FileNotFoundError(f"Required file missing: {e}")
@@ -67,7 +74,7 @@ def get_data(Prompt):
             return None
         
         json_data = json.loads(json_match.group())  
-        return json_data  
+        return json_data
 
     except json.JSONDecodeError as e:
         print("Error parsing JSON:", e)
@@ -155,6 +162,28 @@ def get_subdistrict(market):
 
 ##### Gemini Model Prompt
 
+def getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilColor,pH):
+    Prompt = f"""
+        You are an expert in crop selection. I will provide you with data that includes:
+        The expected total price and yield for various crops.
+        Meteorological and soil data relevant to crop growth.
+        Based on this data, suggest the most profitable crop that is also suitable for the given soil conditions.
+        
+        Price and yield data : {IntelCropData},
+        Nitrogen : {Nitrogen},
+        Potassium : {Potassium},
+        Phosphorus : {Phosphorus},
+        soilColor : {soilColor},
+        pH : {pH}
+        
+        Output Format: JSON
+        suggested_crop
+        reasoning
+        
+        In output only suggested crop and reasoning no any desclaimers or voage statements.
+    """
+    data = get_data(Prompt)
+    return data
 
 # Market price prediction
 def getMahaAnnualRainfall(year, district):
@@ -202,12 +231,16 @@ def getIndiaRainfallMonthly(year, month):
     return rainfall['rainfall']
 
 # market selection guide
-def getMarketSelectionConclusion(MarketData,transportation_data,sourceDistrict):
+def getMarketSelectionConclusion(MarketData,cropyield,transportation_data,sourceDistrict):
     Prompt = f"""
             You are expert in market selection i will provide you the market and the crop prices in that market.
             your job is to guide the farmer to decide the market which gives highest profit.
             On the basis of crop price in that market and the transportation cost required to reach that market.
+            Total net Profit = (cropyield * marketprice) - trasportationcost
+            so you need to use this equation to get the net profit. 
+            According to this net profit suggest the market that provide max profit.
             
+            cropyield : {cropyield}
             marketData : {MarketData}
             transportationData : {transportation_data}
             sourceDistrict : {sourceDistrict}
@@ -267,22 +300,12 @@ def getSellingDecision(Commodity,highestLocalMarketPrice,localMarketName,distric
     return data
 
 
+
 #### Models In Use
 
 
 # division wise
 # Rainfall year prediction
-# def getRainfallDataYearSeries(year):
-#     aggregated_rainfall = []
-#     for month in range(1,12):
-#         column_names_rainfall_model = ['SUBDIVISION','YEAR','MONTH']
-#         features = [["Madhya Maharashtra",year,month]]
-#         features_df = pd.DataFrame(features, columns=column_names_rainfall_model)
-#         transformed_features = rainfall_preprocessor.transform(features_df)
-#         prediction = rainfall_model.predict(transformed_features).reshape(1,-1)
-#         rainfall = round(prediction[0][0] , 2)
-#         aggregated_rainfall.append(rainfall)
-#     return aggregated_rainfall
 def getRainfallDataYearSeries(year):
     aggregated_rainfall = []
     for month in range(1, 13):
@@ -301,15 +324,6 @@ def getRainfallDataYearSeries(year):
             
     return aggregated_rainfall
 
-# Rainfall value prediction
-# def getRainfallValue(year,month):
-#     column_names_rainfall_model = ['SUBDIVISION','YEAR','MONTH']
-#     features = [["Madhya Maharashtra",year,month]]
-#     features_df = pd.DataFrame(features, columns=column_names_rainfall_model)
-#     transformed_features = rainfall_preprocessor.transform(features_df)
-#     prediction = rainfall_model.predict(transformed_features).reshape(1,-1)
-#     rainfall = round(prediction[0][0] , 2)
-#     return rainfall
 def getRainfallValue(year, month):
     try:
         column_names_rainfall_model = ['SUBDIVISION', 'YEAR', 'MONTH']
@@ -324,15 +338,6 @@ def getRainfallValue(year, month):
         return None
 
 
-# market price
-# def marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall):
-#     column_names = ['District', 'Market', 'Commodity', 'Year', 'Month','Rainfall']
-#     features = [[District, Market, Commodity, Year, Month, Rainfall]]
-#     features_df = pd.DataFrame(features, columns=column_names)
-#     transformed_features = market_price_preprocessor.transform(features_df)
-#     prediction = market_price_model.predict(transformed_features).reshape(1,-1)
-#     predicted_market_price = round(prediction[0][0] , 2)
-#     return predicted_market_price
 def marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall):
     try:
         column_names = ['District', 'Market', 'Commodity', 'Year', 'Month', 'Rainfall']
@@ -346,16 +351,6 @@ def marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall):
         print(f"Error predicting market price for {Commodity} in {Market}, {District} for {Year}-{Month}: {e}")
         return None
 
-
-# market data district wise
-# def marketPriceSeries(District, Commodity, Year, Month):
-#     markets = markets_data.get(District, [])
-#     marketPriceData = {}
-#     Rainfall = getMahaAnnualRainfall(Year, District)
-#     for Market in markets:
-#         marketPrice = marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall)
-#         marketPriceData[Market] = marketPrice
-#     return marketPriceData
 def marketPriceSeries(District, Commodity, Year, Month):
     try:
         markets = markets_data.get(District, [])
@@ -369,19 +364,6 @@ def marketPriceSeries(District, Commodity, Year, Month):
         print(f"Error generating market price series for {Commodity} in {District} for {Year}-{Month}: {e}")
         return {}
 
-
-# market data of all district
-# def getAllMarketPrice(Commodity, Year, Month):
-#     marketPriceData = {}
-#     for District in markets_data:
-#         Rainfall = getMahaAnnualRainfall(Year, District)
-#         markets = markets_data.get(District, [])
-#         districtMarketData = {}
-#         for Market in markets:
-#             marketPrice = marketPricePrediction(District, Market, Commodity, Year, Month, Rainfall)
-#             districtMarketData[Market] = marketPrice 
-#         marketPriceData[District] = districtMarketData
-#     return marketPriceData
 def getMarketPriceData(Commodity, Year, Month):
     try:
         marketPriceData = {}
@@ -403,15 +385,6 @@ def getMarketPriceData(Commodity, Year, Month):
         return {}
 
 
-# wpi prediction
-# def wpiPrediction(Commodity, Month, Year, Rainfall):
-#     column_names = ['Commodity','Month','Year','Rainfall']
-#     features = [[Commodity, Month, Year, Rainfall]]
-#     features_df = pd.DataFrame(features, columns=column_names)
-#     transformed_features = wpi_preprocessor.transform(features_df)
-#     prediction = wpi_model.predict(transformed_features).reshape(1,-1)
-#     predicted_wpi = round(prediction[0][0] , 2)
-#     return predicted_wpi
 def wpiPrediction(Commodity, Month, Year, Rainfall):
     try:
         column_names = ['Commodity', 'Month', 'Year', 'Rainfall']
@@ -425,16 +398,6 @@ def wpiPrediction(Commodity, Month, Year, Rainfall):
         print(f"Error predicting WPI for {Commodity} in {Month}/{Year}: {e}")
         return None
 
-
-# wpi price calculation
-# def wpiPricePrediction(Commodity, Month, Year, Rainfall):
-#     wpi = wpiPrediction(Commodity, Month, Year, Rainfall)
-#     commodity_avg_price = commodity_price[Commodity]['avg_price']
-#     commodity_msp_price = commodity_price[Commodity]['msp_price']
-#     min_wpi_price = round((wpi*commodity_avg_price)/100,2)
-#     max_wpi_price = round((wpi*commodity_msp_price)/100,2)
-#     avg_wpi_price = round((min_wpi_price + max_wpi_price) / 2,2)
-#     return min_wpi_price,max_wpi_price,avg_wpi_price
 def wpiPricePrediction(Commodity, Month, Year, Rainfall):
     try:
         wpi = wpiPrediction(Commodity, Month, Year, Rainfall)
@@ -451,20 +414,6 @@ def wpiPricePrediction(Commodity, Month, Year, Rainfall):
         print(f"Error predicting WPI prices for {Commodity} in {Month}/{Year}: {e}")
         return None, None, None
 
-# for whole year
-# def wpiPriceWholeYear(Commodity,Year):
-#     min_price_data = []
-#     msp_data = []
-#     Month = 1 
-#     rainfallData = getRainfallDataYearSeries(Year)
-#     x_count =0 
-#     for rainfall in rainfallData:
-#         min_wpi_price,max_wpi_price,avg_wpi_price = wpiPricePrediction(Commodity,Month,Year,rainfall)
-#         msp_data.append(max_wpi_price)
-#         min_price_data.append(min_wpi_price)
-#         Month = Month + 1
-#         x_count = x_count + 1
-#     return min_price_data,msp_data
 def wpiPriceWholeYear(Commodity, Year):
     try:
         min_price_data = []
@@ -482,13 +431,115 @@ def wpiPriceWholeYear(Commodity, Year):
     except Exception as e:
         print(f"Error predicting WPI prices for {Commodity} in {Year}: {e}")
         return [], []
+    
 
+def getTempretureData(year):
+    months = random.sample(range(1, 13), 6)
+    aggregated_temperature = 0
+        
+    for month in months:
+        # tempreture prediction
+        column_names_temperature_model = ['YEAR','MONTH']
+        features = [[year,month]]
+        features_df = pd.DataFrame(features, columns=column_names_temperature_model)
+        transformed_features = temperature_preprocessor.transform(features_df)
+        prediction = temperature_model.predict(transformed_features).reshape(1,-1)
+        temperature = round(prediction[0][0] , 2)
+        aggregated_temperature+=temperature
+        
+    aggregated_temperature = round(aggregated_temperature/6,2)
+   
+    return aggregated_temperature
+
+
+def yieldPrediction(Year, District, Commodity, Area, Rainfall, Temperature, Soil_color, Fertilizer, Nitrogen, Phosphorus, Potassium, pH):
+    column_names = ['Year', 'District', 'Commodity', 'Area', 'Rainfall', 'Temperature','Soil_color','Fertilizer', 'Nitrogen', 'Phosphorus', 'Potassium', 'pH']
+    features = [[Year, District, Commodity, Area, Rainfall, Temperature, Soil_color, Fertilizer, Nitrogen, Phosphorus, Potassium, pH]]
+    features_df = pd.DataFrame(features, columns=column_names)
+    transformed_features = yield_preprocessor.transform(features_df)
+    prediction = yield_model.predict(transformed_features).reshape(1,-1)
+    predicted_yield = round(prediction[0][0] , 2)
+    return predicted_yield
+
+def getIntelCropData(Commoditys, Year, Month, District, Area, Nitrogen, Potassium, Phosphorus, Fertilizer, soilColor, pH):
+    wpi_Rainfall = getIndiaRainfallMonthly(Year, Month)
+    Rainfall = getMahaAnnualRainfall(Year, District)
+    Temperature = getTempretureData(Year)
+    IntelCroprecData = {}
+
+    for Commodity in Commoditys:
+        min_wpi_price, max_wpi_price, predicted_price = wpiPricePrediction(Commodity, Month, Year, wpi_Rainfall)
+        predicted_yield = yieldPrediction(Year, District, Commodity, Area, Rainfall, Temperature, soilColor, Fertilizer, Nitrogen, Phosphorus, Potassium, pH)
+        totalPrice = round((predicted_yield*Area*predicted_price), 2)
+        
+        # Corrected dictionary assignment
+        IntelCroprecData[Commodity] = {
+            "predicted_price": predicted_price,
+            "predicted_yield": predicted_yield,
+            "area":Area,
+            "totalPrice": totalPrice
+        }
+    return IntelCroprecData
+
+
+coordinate_cache = {}
 
 # get coordinates
+# def get_coordinates(subdistrict, district):
+#     district = district.lower()
+#     subdistrict = get_subdistrict(subdistrict)
+#     subdistrict = subdistrict.lower()
+#     query = f"{subdistrict}, {district}, maharashtra"
+#     url = f"https://nominatim.openstreetmap.org/search?format=json&countrycodes=IN&addressdetails=1&q={query}"
+    
+#     try:
+#         headers = {
+#             "User-Agent": "kisan-dss/1.0",
+#             "Accept": "application/json",
+#             "Accept-Language": "en-US,en;q=0.9",
+#         }
+#         response = requests.get(url,headers=headers)
+        
+#         # Check if the request was successful
+#         if response.status_code != 200:
+#             print(f"Error: Received status code {response.status_code}")
+#             return None
+        
+#         # Parse the JSON response
+#         data = response.json()
+        
+#         if data:
+#             for item in data:
+#                 if item.get("address"):
+#                     taluka_match = item["address"].get("county") or item["address"].get("suburb") or item["address"].get("town") or item["address"].get("village")
+#                     district_match = item["address"].get("state_district") or item["address"].get("county") or item["address"].get("state")
+                    
+#                     # Check if the subdistrict and district match
+#                     if taluka_match and district_match and subdistrict.lower() in taluka_match.lower() and district.lower() in district_match.lower():
+#                         return {"lat": float(item["lat"]), "lon": float(item["lon"])}
+        
+#         # If no matching data is found
+#         print("No matching data found.")
+#         return None
+    
+#     except requests.exceptions.RequestException as e:
+#         print(f"Request failed: {e}")
+#         return None
+#     except ValueError as e:
+#         print(f"Failed to parse JSON: {e}")
+#         print("Response:", response.text)
+#         return None
+
 def get_coordinates(subdistrict, district):
     district = district.lower()
-    subdistrict = get_subdistrict(subdistrict)
-    subdistrict = subdistrict.lower()
+    subdistrict = get_subdistrict(subdistrict).lower()
+    
+    # Check if the coordinates are already in the cache
+    cache_key = (subdistrict, district)
+    if cache_key in coordinate_cache:
+        print("Returning from cache coordinates")
+        return coordinate_cache[cache_key]
+
     query = f"{subdistrict}, {district}, maharashtra"
     url = f"https://nominatim.openstreetmap.org/search?format=json&countrycodes=IN&addressdetails=1&q={query}"
     
@@ -498,7 +549,7 @@ def get_coordinates(subdistrict, district):
             "Accept": "application/json",
             "Accept-Language": "en-US,en;q=0.9",
         }
-        response = requests.get(url,headers=headers)
+        response = requests.get(url, headers=headers)
         
         # Check if the request was successful
         if response.status_code != 200:
@@ -515,49 +566,84 @@ def get_coordinates(subdistrict, district):
                     district_match = item["address"].get("state_district") or item["address"].get("county") or item["address"].get("state")
                     
                     # Check if the subdistrict and district match
-                    if taluka_match and district_match and subdistrict.lower() in taluka_match.lower() and district.lower() in district_match.lower():
-                        return {"lat": float(item["lat"]), "lon": float(item["lon"])}
+                    if taluka_match and district_match and subdistrict in taluka_match.lower() and district in district_match.lower():
+                        coordinates = {"lat": float(item["lat"]), "lon": float(item["lon"])}
+                        
+                        # Store in cache
+                        coordinate_cache[cache_key] = coordinates
+                        
+                        return coordinates
         
         # If no matching data is found
         print("No matching data found.")
         return None
-    
-    except requests.exceptions.RequestException as e:
+
+    except requests.RequestException as e:
         print(f"Request failed: {e}")
         return None
-    except ValueError as e:
-        print(f"Failed to parse JSON: {e}")
-        print("Response:", response.text)
-        return None
 
-# get distance and duration
 # def calculate_osrm_distance(source_coords, destination_coords):
-#     url = f"http://router.project-osrm.org/route/v1/driving/{source_coords['lon']},{source_coords['lat']};{destination_coords['lon']},{destination_coords['lat']}?overview=false"
-#     response = requests.get(url)
-#     data = response.json()
-#     if data.get("routes"):
-#         distance = data["routes"][0]["legs"][0]["distance"] / 1000 
-#         duration = data["routes"][0]["legs"][0]["duration"] / 60 
-#         return {"distance": distance, "duration": duration}
-#     return None
+#     try:
+#         url = f"http://router.project-osrm.org/route/v1/driving/{source_coords['lon']},{source_coords['lat']};{destination_coords['lon']},{destination_coords['lat']}?overview=false"
+#         response = requests.get(url)
+        
+#         if response.status_code != 200:
+#             print(f"Error: Received status code {response.status_code}")
+#             return None
+        
+#         data = response.json()
+#         if data.get("routes"):
+#             distance = data["routes"][0]["legs"][0]["distance"] / 1000  # distance in km
+#             duration = data["routes"][0]["legs"][0]["duration"] / 60  # duration in minutes
+#             return {"distance": distance, "duration": duration}
+#         time.sleep(500)
+#         print("Error: No route found in the response.")
+#         return None
+#     except requests.exceptions.RequestException as e:
+#         print(f"Error making the request: {e}")
+#         return None
+#     except Exception as e:
+#         print(f"Unexpected error: {e}")
+#         return None
+import requests
+
+# Cache to store OSRM distances
+distance_cache = {}
 
 def calculate_osrm_distance(source_coords, destination_coords):
     try:
+        # Create a unique cache key using source and destination coordinates
+        cache_key = (source_coords['lat'], source_coords['lon'], destination_coords['lat'], destination_coords['lon'])
+
+        # Check if data is already in the cache
+        if cache_key in distance_cache:
+            print("Returning from cache")
+            return distance_cache[cache_key]
+
+        # Make request to OSRM API
         url = f"http://router.project-osrm.org/route/v1/driving/{source_coords['lon']},{source_coords['lat']};{destination_coords['lon']},{destination_coords['lat']}?overview=false"
         response = requests.get(url)
-        
+
+        # Handle non-200 status codes
         if response.status_code != 200:
             print(f"Error: Received status code {response.status_code}")
             return None
-        
+
         data = response.json()
+
+        # Extract distance and duration if available
         if data.get("routes"):
-            distance = data["routes"][0]["legs"][0]["distance"] / 1000  # distance in km
-            duration = data["routes"][0]["legs"][0]["duration"] / 60  # duration in minutes
-            return {"distance": distance, "duration": duration}
-        
+            distance = data["routes"][0]["legs"][0]["distance"] / 1000  # in km
+            duration = data["routes"][0]["legs"][0]["duration"] / 60    # in minutes
+            result = {"distance": distance, "duration": duration}
+
+            # Store result in cache
+            distance_cache[cache_key] = result
+            return result
+
         print("Error: No route found in the response.")
         return None
+
     except requests.exceptions.RequestException as e:
         print(f"Error making the request: {e}")
         return None
@@ -566,32 +652,58 @@ def calculate_osrm_distance(source_coords, destination_coords):
         return None
 
 
-# Function to fetch fuel prices
-# def fetch_fuel_prices(district):
-#     district = district.lower()
-#     url = f"https://daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com/v1/fuel-prices/today/india/maharashtra/{district}"
-#     headers = {
-#         "x-rapidapi-key": DAILY_FULE_DATA_KEY,
-#         "x-rapidapi-host": "daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com",
-#     }
-#     response = requests.get(url, headers=headers)
-#     return response.json()
+# def get_fuel_prices_for_district(district):
+#     try:
+#         district = district.lower()
+#         url = f"https://daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com/v1/fuel-prices/today/india/maharashtra/{district}"
+#         headers = {
+#             "x-rapidapi-key": DAILY_FUEL_DATA_KEY,
+#             "x-rapidapi-host": "daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com",
+#         }
+#         response = requests.get(url, headers=headers)
+        
+#         if response.status_code != 200:
+#             print(f"Error: Received status code {response.status_code}")
+#             return None
+        
+#         return response.json()
+#     except requests.exceptions.RequestException as e:
+#         print(f"Error making the request: {e}")
+#         return None
+#     except Exception as e:
+#         print(f"Unexpected error: {e}")
+#         return None
+
+# Dictionary to store cached fuel prices
+fuel_price_cache = {}
 
 def get_fuel_prices_for_district(district):
     try:
         district = district.lower()
+       
+        # Check if data is in cache and not expired
+        if district in fuel_price_cache:
+            cached_data = fuel_price_cache[district]
+            print("Returning from cache fuel")
+            return cached_data
+
         url = f"https://daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com/v1/fuel-prices/today/india/maharashtra/{district}"
         headers = {
             "x-rapidapi-key": DAILY_FUEL_DATA_KEY,
             "x-rapidapi-host": "daily-petrol-diesel-lpg-cng-fuel-prices-in-india.p.rapidapi.com",
         }
         response = requests.get(url, headers=headers)
-        
+
         if response.status_code != 200:
             print(f"Error: Received status code {response.status_code}")
             return None
-        
-        return response.json()
+
+        fuel_data = response.json()
+
+        # Store data in cache with timestamp
+        fuel_price_cache[district] = (fuel_data)
+
+        return fuel_data
     except requests.exceptions.RequestException as e:
         print(f"Error making the request: {e}")
         return None
@@ -599,40 +711,6 @@ def get_fuel_prices_for_district(district):
         print(f"Unexpected error: {e}")
         return None
 
-
-# trasportation cost
-# def calculateTransportationDistance(coords_source,fuel_prices,des_district,mileage):
-#     subdistricts = markets_data[des_district]
-#     transportation_data_all = {}
-#     transportation_data = {}
-#     for des_subdistrict in subdistricts:
-#         with concurrent.futures.ThreadPoolExecutor() as executor:
-#             future_coords_destination = executor.submit(get_coordinates, des_subdistrict,des_district)
-#             coords_destination = future_coords_destination.result()
-            
-#         if coords_source and coords_destination:
-#             distance_result = calculate_osrm_distance(coords_source, coords_destination)
-#             if distance_result:
-#                 transportation_cost = (distance_result["distance"] / mileage) * fuel_prices["fuel"]["diesel"]["retailPrice"]
-#                 data = {
-#                     "distance": round(distance_result["distance"], 2),  
-#                     "duration": round(distance_result["duration"], 2),  
-#                     "transportation_cost": round(transportation_cost, 2),  
-#                     "fuel_prices": round(fuel_prices["fuel"]["diesel"]["retailPrice"], 2) 
-#                 }
-#             transportation_data[des_subdistrict] = data
-#             transportation_data_all[des_subdistrict] = data
-#         else :
-#             data = {
-#                     "distance":'N/A',  
-#                     "duration": 'N/A', 
-#                     "transportation_cost": 'N/A', 
-#                     "fuel_prices": 'N/A'
-#                 }
-#             transportation_data_all[des_subdistrict] = data
-            
-#     return transportation_data_all,transportation_data
-import concurrent.futures
 
 def calculateTransportationDistance(coords_source, fuel_prices, des_district, mileage):
     transportation_data_all = {}
@@ -684,20 +762,6 @@ def calculateTransportationDistance(coords_source, fuel_prices, des_district, mi
 
     return transportation_data_all, transportation_data
 
-
-# trasportation cost for all markets
-# def getTransportationData(src_subdistrict,src_district,des_district,milage):
-#     with concurrent.futures.ThreadPoolExecutor() as executor:
-#         future_coords_source = executor.submit(get_coordinates, src_subdistrict,src_district)
-#         future_fuel_prices = executor.submit(get_fuel_prices_for_district, src_district)
-#         coords_source = future_coords_source.result()
-#         fuel_prices = future_fuel_prices.result()
-        
-#     transportation_data_all,transportation_data = calculateTransportationDistance(coords_source,fuel_prices,des_district,milage)
-#     # print(transportation_data_all)
-#     return transportation_data_all,transportation_data
-import concurrent.futures
-
 def getTransportationData(src_subdistrict, src_district, des_district, mileage):
     try:
         with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -730,31 +794,6 @@ def getTransportationData(src_subdistrict, src_district, des_district, mileage):
 def index():
     return ("Server running on localhost:5000")
 
-# @app.route('/intel-market-price',methods=['POST'])
-# def marketPrice():
-#     if request.method == 'POST':
-#         data = request.get_json()
-#         Commodity = data.get('commodity')
-#         Year = data.get('year')
-#         Month = data.get('month')
-#         srcSubdistrict = data.get('srcSubdistrict')
-#         srcDistrict = data.get('srcDistrict')
-#         desDistrict = data.get('desDistrict')
-#         milage  = data.get('milage')
-        
-#         Year = int(Year)
-#         Month = int(Month)
-#         milage = int(milage)
-       
-#         marketPriceData = marketPriceSeries(desDistrict, Commodity, Year, Month)
-#         # print(marketPriceData)
-#         transportation_data_all,transportation_data = getTransportationData(srcSubdistrict,srcDistrict,desDistrict,milage)
-#         # print(transportation_data)
-#         conclusion = getMarketSelectionConclusion(marketPriceData,transportation_data,srcDistrict)
-#         # print(conclusion)
-#         return jsonify({'data':marketPriceData,'transportationData':transportation_data_all,'conclusion':conclusion})
-from flask import Flask, request, jsonify
-
 @app.route('/intel-market-price', methods=['POST'])
 def marketPrice():
     if request.method == 'POST':
@@ -776,6 +815,7 @@ def marketPrice():
             srcDistrict = data.get('srcDistrict')
             desDistrict = data.get('desDistrict')
             milage = int(data.get('milage'))
+            cropyield = int(data.get('cropyield'))
             
             # Get market price data
             marketPriceData = marketPriceSeries(desDistrict, Commodity, Year, Month)
@@ -788,7 +828,7 @@ def marketPrice():
                 return jsonify({"error": "Failed to get transportation data"}), 500
             
             # Get conclusion
-            conclusion = getMarketSelectionConclusion(marketPriceData, transportation_data, srcDistrict)
+            conclusion = getMarketSelectionConclusion(marketPriceData,cropyield, transportation_data, srcDistrict)
             if not conclusion:
                 return jsonify({"error": "Failed to generate market selection conclusion"}), 500
             
@@ -796,6 +836,7 @@ def marketPrice():
             return jsonify({
                 'data': marketPriceData,
                 'transportationData': transportation_data_all,
+                'cropyield':cropyield,
                 'conclusion': conclusion
             })
 
@@ -803,52 +844,6 @@ def marketPrice():
             # Handle unexpected errors
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
-
-# @app.route('/intel-wpi-price',methods=['POST'])
-# def IntelWPI():
-#     if request.method == 'POST':
-#         data = request.get_json()
-#         Commodity = data.get('commodity')
-#         Year = data.get('year')
-#         Month = data.get('month')
-        
-#         Year = int(Year)
-#         Month = int(Month)
-        
-#         Rainfall = getIndiaRainfallMonthly(Year,Month)
-        
-#         avgPrice,minPrice,maxPrice = wpiPricePrediction(Commodity,Month,Year,Rainfall)
-        
-#         minPriceCurrSeries,maxPriceCurrSeries = wpiPriceWholeYear(Commodity,Year)
-#         minPriceNextSeries,maxPriceNextSeries = wpiPriceWholeYear(Commodity,Year+1)
-        
-#         maxMSPPrice = max(maxPriceCurrSeries)
-#         maxAvgPrice = max(minPriceCurrSeries)
-#         minMSPPrice = min(maxPriceCurrSeries)
-#         minAvgPrice = min(minPriceCurrSeries)
-
-#         goldMonthIndex = maxPriceCurrSeries.index(maxMSPPrice) + 1
-#         silverMonthIndex = maxPriceCurrSeries.index(minMSPPrice) + 1
-        
-#         return jsonify({
-#             'rainfall':Rainfall,
-#             'commodity':Commodity,
-#             'year':Year,
-#             'month':Month,
-#             'avgPrice':avgPrice,
-#             'minPrice':minPrice,
-#             'maxPrice':maxPrice,
-#             'minPriceCurrSeries':minPriceCurrSeries,
-#             'maxPriceCurrSeries':maxPriceCurrSeries,
-#             'minPriceNextSeries':minPriceNextSeries,
-#             'maxPriceNextSeries':maxPriceNextSeries,
-#             'maxMSPPrice':maxMSPPrice,
-#             'maxAvgPrice':maxAvgPrice,
-#             'minMSPPrice':minMSPPrice,
-#             'minAvgPrice':minAvgPrice,
-#             'goldMonthIndex':goldMonthIndex,
-#             'silverMonthIndex':silverMonthIndex,
-#         })
 
 @app.route('/intel-wpi-price', methods=['POST'])
 def IntelWPI():
@@ -918,44 +913,6 @@ def IntelWPI():
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 
-# @app.route('/intel-build-decision',methods=['POST'])
-# def getDecision():
-#     if request.method == 'POST':
-#         data = request.get_json()
-#         Commodity = data.get('commodity')
-#         Year = data.get('year')
-#         Month = data.get('month')
-#         storageAvailability = data.get('storageAvailability')
-        
-#         Year = int(Year)
-#         Month = int(Month)
-        
-#         Rainfall = getIndiaRainfallMonthly(Year,Month)
-#         print(Rainfall)
-#         govMarketPrice = wpiPricePrediction(Commodity,Month,Year,Rainfall)
-
-#         marketPriceData = getMarketPriceData(Commodity,Year,Month)
-      
-#         highestLocalMarketPrice = -1 
-#         localMarketName = None
-#         districtName = None
-
-#         for district, market_data in marketPriceData.items():
-#             for market, price in market_data.items():
-#                 if price > highestLocalMarketPrice:
-#                     highestLocalMarketPrice = price
-#                     localMarketName = market
-#                     districtName = district
-
-#         decision = getSellingDecision(Commodity,highestLocalMarketPrice,localMarketName,districtName,govMarketPrice,storageAvailability)
-        
-#         return jsonify({
-#                         'decision':decision,
-#                         'govMarketPrice':govMarketPrice,
-#                         'highestLocalMarketPrice':highestLocalMarketPrice,
-#                         'localMarketName':localMarketName,
-#                         'districtName':districtName})
-
 @app.route('/intel-build-decision', methods=['POST'])
 def getDecision():
     if request.method == 'POST':
@@ -1020,6 +977,48 @@ def getDecision():
         except Exception as e:
             return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
+@app.route('/intel-crop-recommendation',methods=['POST'])
+def IntelCropRec():
+    if request.method == 'POST':
+        data = request.get_json()
+        Commoditys = data.get('crops')
+        Year = data.get('year')
+        Month = data.get('month')
+        District = data.get('district')
+        Area = data.get('area')
+        Fertilizer = data.get('fertilizer')
+        Nitrogen = data.get('nitrogen')
+        Phosphorus = data.get('phosphorus')
+        Potassium = data.get('potassium')
+        pH = data.get('pH')
+        soilColor  = data.get("soilColor")
+        try:
+            Year = int(Year)
+            Month = int(Month)
+            Area = float(Area)
+            Nitrogen = float(Nitrogen)
+            Phosphorus = float(Phosphorus)
+            Potassium = float(Potassium)
+            pH = float(pH)
+        except ValueError:
+            print("Error data conversion")
+            return jsonify({"error": "Invalid input format for numbers"}), 400
+
+        IntelCropData = getIntelCropData(Commoditys,Year,Month,District,Area,Nitrogen,Potassium,Phosphorus,Fertilizer,soilColor,pH)
+        conclusion = getCropSelectionConclusion(IntelCropData,Nitrogen,Potassium,Phosphorus,soilColor,pH)
+        return jsonify({'data':IntelCropData,'conclusion':conclusion})
+    
+    
+@app.route('/intel-gov-scheme', methods=['POST'])   
+def getGovSchemeData():
+    print("get request")
+    data = request.get_json()
+    commodity = data.get('commodity')
+    print(commodity)
+    Prompt = f"""Provide information about 3 Indian government schemes related to {commodity} farming in JSON format. The JSON should be an array of objects. Each object should have the following keys: 'scheme_name', 'purpose', and 'benefits' (which should be an array of strings). do not write the disclaimer or extra information only json data of goverment scheme in specified format"""
+    goverment_data = get_data(Prompt)
+    print(goverment_data)
+    return jsonify({'data':goverment_data})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

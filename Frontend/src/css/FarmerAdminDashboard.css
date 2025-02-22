@@ -106,6 +106,7 @@
   
   /* Content Area */
   .FarmerAdmin_content {
+    /* width:70vh; */
     flex: 1;
     padding: 3rem;
   }

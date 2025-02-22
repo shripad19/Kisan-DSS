@@ -339,3 +339,22 @@
     66%  {background-position: 250% 0,-150% 0}
     100% {background-position: 250% 0, 250% 0}
   }
+
+  .reasoning-text{
+    margin-left:1rem;
+  }
+
+  .crop-recommendation-block{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.crop-recommendation-link{
+    text-decoration: none;
+}
+
+.crop-recommendation-link :hover{
+    text-decoration: underline 0.2rem solid green;
+}

@@ -105,7 +105,7 @@ export default function SignupFarmer({setIsLogin}) {
               />
             </div>
           </div>
-          <div className="form-group">
+          {/* <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -115,7 +115,7 @@ export default function SignupFarmer({setIsLogin}) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-          </div>
+          </div> */}
 
           <button type="submit">Sign Up</button>
         </form>

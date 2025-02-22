@@ -1,0 +1,153 @@
+/* intel-crop-rec-result.css */
+.intel-yield-result-root {
+    background: linear-gradient(135deg, #f0f7da 0%, #d8edd3 100%);
+    min-height: 100vh;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.intel-yield-result-nav {
+    background-color: #2d5a27;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.intel-yield-result-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.intel-yield-result-nav a:hover {
+    color: #e0f0d9;
+}
+
+.section-header {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.section-header h2 {
+    color: #2d5a27;
+    font-size: 2rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.commodity-container {
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+}
+
+.crop-selection-main-block {
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 12px rgba(0,0,0,0.08);
+}
+
+th, td {
+    padding: 1.2rem;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #4a8c3a;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background-color: #f5faf4;
+    transition: background-color 0.3s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.conclusion {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #e8f5e9;
+    border-left: 5px solid #4a8c3a;
+    border-radius: 8px;
+    animation: fadeIn 0.8s ease;
+}
+
+.conclusion h3 {
+    color: #2d5a27;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.conclusion p {
+    color: #4a8c3a;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.intel-yield-result-footer {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #2d5a27;
+    color: white;
+    border-radius: 12px;
+    margin-top: 2rem;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+}
+
+/* Chart Styling */
+.commodity-container .chart-container {
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    th, td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .conclusion {
+        padding: 1rem;
+    }
+    
+    .conclusion h3 {
+        font-size: 1.2rem;
+    }
+}

@@ -22,6 +22,12 @@ import CropHistory from "./components/CropHistory";
 import MyCart from "./components/MyCart";
 import MyOrders from "./components/MyOrders";
 
+import IntelCropRec from "./components/IntelCropRec";
+import IntelCropRecResult from "./components/IntelCropRecResult";
+
+import IntelGovScheme from "./components/IntelGovScheme";
+
+
 export default function App() {
   return (
     <Router>
@@ -42,6 +48,11 @@ export default function App() {
           path="/intel-gov-market-dashboard"
           element={<IntelLocalMarket />}
         />
+
+        <Route path="/intel-crop-recommendation" element={<IntelCropRec />} />
+        <Route path="/intel-crop-rec-result" element={<IntelCropRecResult />} />
+
+        <Route path="/intel-goverment-scheme" element={<IntelGovScheme />} />
 
         <Route path="/login/farmer" element={<LoginFarmer />} />
         <Route path="/signup/farmer" element={<SignupFarmer />} />

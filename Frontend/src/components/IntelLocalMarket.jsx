@@ -32,6 +32,7 @@ export default function IntelLocalMarket() {
 
   const marketPriceData = state?.data;
   const transportationData = state?.transportationData;
+  const cropyield = state?.cropyield;
 
   const [marketDataList, setMarketDataList] = useState([]);
 
@@ -60,6 +61,7 @@ export default function IntelLocalMarket() {
           duration: transportation.duration + " hours",
           fuelPrice: transportation.fuel_prices + "₹/liter",
           transportationCost: transportation.transportation_cost + "₹",
+          netProfit : ((cropyield*price) - transportation.transportation_cost).toFixed(2) + " ₹",
         };
 
         // Add the new object to the newMarketDataList array
@@ -145,7 +147,7 @@ export default function IntelLocalMarket() {
           <div className="intel-local-market-commodity-container">
             <div className="conclusion">
               <h3>Recommended Market : {state.conclusion.suggested_market}</h3>
-              <p>{state.conclusion.reasoning}</p>
+              <p className="reasoning-text">{state.conclusion.reasoning}</p>
             </div>
           </div>
         )}
@@ -206,10 +208,14 @@ const APMCMarketCard = ({ market }) => {
 
       <div className="intel-local-market-price-section">
         <div className="intel-local-market-current-price">{market.price}</div>
+        <div className="intel-local-market-current-price net-price">
+          <span className="intel-market-net-profit-title">Net Profit :</span> 
+        {market.netProfit}
+          </div>
         {/* <div className="intel-local-market-price-change positive">
           {market.change}
         </div> */}
-        <div className="intel-local-market-update-date">Today's Price</div>
+        {/* <div className="intel-local-market-update-date">Today's Price</div> */}
       </div>
 
       {/* <div className="intel-local-market-commodities">

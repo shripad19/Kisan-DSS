@@ -99,7 +99,7 @@
 }
 
 .intel-local-market-current-price {
-    font-size: 2rem;
+    font-size: 1.3rem;
     color: var(--fresh-growth);
     font-weight: 700;
     margin-bottom: 0.5rem;
@@ -177,4 +177,13 @@
 .Priceresult_glass-footer p{
     margin:0px;
     padding:0px;
+}
+
+.intel-market-net-profit-title{
+    font-size:1rem;
+    padding-right:0.5rem;
+}
+
+.net-price{
+    font-size:1.8rem;
 }

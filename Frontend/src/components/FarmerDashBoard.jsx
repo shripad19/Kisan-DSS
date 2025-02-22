@@ -216,6 +216,20 @@ export default function FarmerDashBoard() {
             )}
           </main>
 
+          <main className="farmer-dashboard-smart-container crop-recommendation-block">
+            <Link className="crop-recommendation-link" to="/intel-crop-recommendation">
+            <h1 className="farmer-dashboard-h1">Smart Crop Recommendation</h1>
+            </Link>
+            <p><i>Grow the Right Crop, at the Right Time!</i></p>
+          </main>
+
+          <main className="farmer-dashboard-smart-container crop-recommendation-block">
+            <Link className="crop-recommendation-link" to="/intel-goverment-scheme">
+            <h1 className="farmer-dashboard-h1">Goverment Schemes</h1>
+            </Link>
+            <p><i>Bridging Farmers with Government Support!</i></p>
+          </main>
+
           {govMarketForm && <IntelGovMarketForm setGovMarketForm={setGovMarketForm}  />}
           {localMarketForm && <IntelLocalMarketForm setLocalMarketForm={setLocalMarketForm}  />}
 
