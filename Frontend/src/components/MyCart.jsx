@@ -421,7 +421,7 @@ import "../css/MyCart.css";
 const MyCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [userId, setUserId] = useState("");
-  const [rating, setRating] = useState(0); // Store user rating
+  const [rating, setRating] = useState(""); // Store user rating
   const [showRatingModal, setShowRatingModal] = useState(false); // Control rating modal
   const [selectedProduct, setSelectedProduct] = useState(null); // Store selected product for rating
   const navigate = useNavigate();

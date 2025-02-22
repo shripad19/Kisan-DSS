@@ -839,6 +839,7 @@ def marketPrice():
             
             # Get transportation data
             transportation_data_all, transportation_data = getTransportationData(srcSubdistrict, srcDistrict, desDistrict, milage)
+            
             if not transportation_data_all or not transportation_data:
                 return jsonify({"error": "Failed to get transportation data"}), 500
             
