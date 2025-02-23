@@ -7,8 +7,9 @@ import "../static/css/farmer_dashboard.css";
 import IntelGovMarketForm from "./IntelGovMarketForm";
 import IntelLocalMarketForm from "./IntelLocalMarketForm";
 
-export default function FarmerDashBoard() {
+import ChatBot from "./ChatBot";
 
+export default function FarmerDashBoard() {
   const navigate = useNavigate();
 
   const [commodity, setCommodity] = useState("");
@@ -19,8 +20,19 @@ export default function FarmerDashBoard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [chatBot,setChatBot] = useState(false);
+
   const [govMarketForm, setGovMarketForm] = useState(false);
   const [localMarketForm, setLocalMarketForm] = useState(false);
+
+  const handleChatBot = (e)=>{
+    e.preventDefault();
+    if(chatBot){
+      setChatBot(false);
+    }else{
+      setChatBot(true);
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,10 +71,9 @@ export default function FarmerDashBoard() {
     console.log("Loading state changed:", loading);
   }, [loading]);
 
-  
-  const farmerAdminNavigation = ()=>{
-    navigate('/home-farmer');
-  }
+  const farmerAdminNavigation = () => {
+    navigate("/home-farmer");
+  };
 
   return (
     <div className="farmer-dashboard-root">
@@ -217,21 +228,35 @@ export default function FarmerDashBoard() {
           </main>
 
           <main className="farmer-dashboard-smart-container crop-recommendation-block">
-            <Link className="crop-recommendation-link" to="/intel-crop-recommendation">
-            <h1 className="farmer-dashboard-h1">Smart Crop Recommendation</h1>
+            <Link
+              className="crop-recommendation-link"
+              to="/intel-crop-recommendation"
+            >
+              <h1 className="farmer-dashboard-h1">Smart Crop Recommendation</h1>
             </Link>
-            <p><i>Grow the Right Crop, at the Right Time!</i></p>
+            <p>
+              <i>Grow the Right Crop, at the Right Time!</i>
+            </p>
           </main>
 
           <main className="farmer-dashboard-smart-container crop-recommendation-block">
-            <Link className="crop-recommendation-link" to="/intel-goverment-scheme">
-            <h1 className="farmer-dashboard-h1">Goverment Schemes</h1>
+            <Link
+              className="crop-recommendation-link"
+              to="/intel-goverment-scheme"
+            >
+              <h1 className="farmer-dashboard-h1">Goverment Schemes</h1>
             </Link>
-            <p><i>Bridging Farmers with Government Support!</i></p>
+            <p>
+              <i>Bridging Farmers with Government Support!</i>
+            </p>
           </main>
 
-          {govMarketForm && <IntelGovMarketForm setGovMarketForm={setGovMarketForm}  />}
-          {localMarketForm && <IntelLocalMarketForm setLocalMarketForm={setLocalMarketForm}  />}
+          {govMarketForm && (
+            <IntelGovMarketForm setGovMarketForm={setGovMarketForm} />
+          )}
+          {localMarketForm && (
+            <IntelLocalMarketForm setLocalMarketForm={setLocalMarketForm} />
+          )}
 
           <div className="cover_service_grid">
             <div className="cover_service_card">
@@ -273,10 +298,24 @@ export default function FarmerDashBoard() {
                 <br />
                 Direct digital marketplace connecting farmers with consumers.
               </p>
-              <button onClick={farmerAdminNavigation} className="cover_access_button">Visit Marketplace</button>
+              <button
+                onClick={farmerAdminNavigation}
+                className="cover_access_button"
+              >
+                Visit Marketplace
+              </button>
             </div>
           </div>
         </div>
+
+        {chatBot && (<ChatBot/>)}
+
+        <div className="farmer-bot-block">
+          <button onClick={handleChatBot} className="farmer-bot-btn">
+            <i class="fa-solid fa-robot"></i>
+          </button>
+        </div>
+
       </div>
     </div>
   );

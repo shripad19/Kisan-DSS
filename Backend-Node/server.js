@@ -6,6 +6,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
+const { Translate } = require("@google-cloud/translate").v2;
+
+
 const farmerscoll = require("./models/farmer");
 const userscoll = require("./models/user");
 const cropcolls = require("./models/crop");
@@ -179,6 +183,33 @@ app.post("/request-otp", async (req, res) => {
 });
 
 // Verify OTP
+// app.post("/verify-otp", async (req, res) => {
+//     try {
+//         const { email, otp } = req.body;
+
+//         const user = await userscoll.findOne({ email });
+//         if (!user || user.otp !== otp) {
+//             return res.status(400).json({ message: "Invalid OTP" });
+//         }
+
+//         // Clear OTP after successful login
+//         user.otp = null;
+//         await user.save();
+
+//         // Generate JWT Token
+//         const token = jwt.sign(
+//             { userId: user._id, name: user.name, email: user.email, state: user.state, phone: user.phone, district: user.district, coins: user.coins  },
+//             secretKey,
+//             { expiresIn: "1h" }
+//         );
+
+//         res.json({ message: "Login successful", token, user });
+
+//     } catch (err) {
+//         res.status(500).json({ message: "Error verifying OTP", error: err.message });
+//     }
+// });
+
 app.post("/verify-otp", async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -237,6 +268,33 @@ app.post("/request-otp-farmer", async (req, res) => {
 });
 
 // Step 2: Verify OTP
+// app.post("/verify-otp-farmer", async (req, res) => {
+//     try {
+//         const { email, otp } = req.body;
+
+//         const user = await farmerscoll.findOne({ email });
+//         if (!user || user.otp !== otp) {
+//             return res.status(400).json({ message: "Invalid OTP" });
+//         }
+
+//         // Clear OTP after successful login
+//         user.otp = null;
+//         await user.save();
+
+//         // Generate JWT Token
+//         const token = jwt.sign(
+//             { userId: user._id, name: user.name, email: user.email, state: user.state, phone: user.phone, district: user.district, coins: user.coins  },
+//             secretKey,
+//             { expiresIn: "1h" }
+//         );
+
+//         res.json({ message: "Login successful", token, user });
+
+//     } catch (err) {
+//         res.status(500).json({ message: "Error verifying OTP", error: err.message });
+//     }
+// });
+
 app.post("/verify-otp-farmer", async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -252,7 +310,7 @@ app.post("/verify-otp-farmer", async (req, res) => {
 
         // Generate JWT Token
         const token = jwt.sign(
-            { userId: user._id, email: user.email, name: user.name },
+            { userId: user._id, email: user.email, name: user.name, email: user.email, state: user.state, phone: user.phone, district: user.district, coins: user.coins },
             secretKey,
             { expiresIn: "1h" }
         );
@@ -263,7 +321,6 @@ app.post("/verify-otp-farmer", async (req, res) => {
         res.status(500).json({ message: "Error verifying OTP", error: err.message });
     }
 });
-
 
 app.get("/farmer-profile", async (req, res) => {
     const { email } = req.query;
@@ -733,6 +790,151 @@ app.get("/api/users/:userId/transactions", async (req, res) => {
     }
 });
 
+
+const MODEL_NAME = "gemini-pro";
+const API_KEY = process.env.API_KEY;
+const GOOGLE_TRANSLATE_API_KEY = process.env.GOOGLE_TRANSLATE_API_KEY;
+
+const translate = new Translate({ key: GOOGLE_TRANSLATE_API_KEY });
+
+// ✅ Function to detect language
+const detectLanguage = async (text) => {
+  try {
+    const [detection] = await translate.detect(text);
+    return detection.language;
+  } catch (error) {
+    console.error("Error detecting language:", error);
+    return "en"; // Default to English if detection fails
+  }
+};
+
+// ✅ Function to translate text
+const translateText = async (text, targetLang) => {
+  try {
+    const [translatedText] = await translate.translate(text, targetLang);
+    return translatedText;
+  } catch (error) {
+    console.error("Error translating text:", error);
+    return text; // Return original text if translation fails
+  }
+};
+
+// ✅ Function to handle AI Chatbot logic
+async function runChat(userInput) {
+  try {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+
+    const generationConfig = {
+      temperature: 0.9,
+      topK: 1,
+      topP: 1,
+      maxOutputTokens: 1000,
+    };
+
+    const safetySettings = [
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+      },
+    ];
+
+    const chat = model.startChat({
+      generationConfig,
+      safetySettings,
+      history: [
+        {
+          role: "user",
+          parts: [{ 
+            text: `
+            You are AgriBot, an advanced agriculture assistant specializing in market intelligence, crop insights, and direct market access for farmers. Your primary role is to assist farmers in Maharashtra with real-time market trends, crop pricing, and agricultural insights. Only provide information related to agriculture, specifically:
+
+            1 *Market Trends & Pricing*  
+               - Provide real-time APMC market prices for different crops.  
+               - Refer to Agmarknet (https://agmarknet.gov.in/) for the latest market rates.  
+               - Recommend the most profitable markets for selling a specific crop based on demand and price fluctuations.  
+
+            2️ *Most Consumed Crops & Regional Insights*  
+               - Answer queries on top crops grown and consumed in a given district or state.  
+               - Suggest crops that are highly profitable based on regional demand.  
+
+            3️ *Direct Market Access & Smart Selling*  
+               - Guide farmers on where they can sell their crops for maximum profit.  
+               - Analyze transportation costs to suggest the best market options.  
+
+            4️ *Crop-Specific Advisory*  
+               - Provide best practices for growing and selling crops.  
+               - Give harvest recommendations based on soil and climate conditions.  
+
+            By default, focus only on Maharashtra unless another state is specified.  
+            Politely refuse unrelated queries.
+            `
+          }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "Hello! I'm AgriBot, your agriculture assistant. How can I help you today?" }],
+        },
+      ],
+    });
+
+    const result = await chat.sendMessage(userInput);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error in AI chatbot:", error);
+    return "Sorry, I couldn't process your request.";
+  }
+}
+
+
+
+// ✅ API: Detect Language
+app.post("/detect-language", async (req, res) => {
+  try {
+    const [detection] = await translate.detect(req.body.text);
+    res.json({ language: detection.language });
+  } catch (error) {
+    res.status(500).json({ error: "Error detecting language" });
+  }
+});
+
+// ✅ API: Translate Text
+app.post("/translate", async (req, res) => {
+  try {
+    const { text, targetLang } = req.body;
+    const [translatedText] = await translate.translate(text, targetLang);
+    res.json({ translatedText });
+  } catch (error) {
+    res.status(500).json({ error: "Error translating text" });
+  }
+});
+
+// ✅ API: Chatbot with Multilingual Support
+app.post("/chat", async (req, res) => {
+  try {
+    const userInput = req.body?.userInput;
+    if (!userInput) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
+    // 🔹 Detect language of user input
+    const detectedLanguage = await detectLanguage(userInput);
+
+    // 🔹 Translate user input to English before sending to chatbot
+    const translatedInput = await translateText(userInput, "en");
+
+    // 🔹 Get chatbot response (processed in English)
+    const chatbotResponse = await runChat(translatedInput);
+
+    // 🔹 Translate chatbot response back to detected language
+    const translatedResponse = await translateText(chatbotResponse, detectedLanguage);
+
+    res.json({ response: translatedResponse, detectedLanguage });
+  } catch (error) {
+    console.error("Error in chat endpoint:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 
 app.listen(port, () => {

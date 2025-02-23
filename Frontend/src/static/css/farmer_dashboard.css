@@ -358,3 +358,54 @@
 .crop-recommendation-link :hover{
     text-decoration: underline 0.2rem solid green;
 }
+
+
+.farmer-bot-block{
+    position: fixed;
+    bottom:2rem;
+    right:2rem;
+}
+
+.farmer-bot-block {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+  }
+  
+  .farmer-bot-btn {
+    padding: 1rem 1.2rem;
+    border-radius: 50%;
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .farmer-bot-btn:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .farmer-bot-block {
+      bottom: 1rem;
+      right: 1rem;
+    }
+    
+    .farmer-bot-btn {
+      width: 45px;
+      height: 45px;
+      font-size: 1rem;
+    }
+  }
