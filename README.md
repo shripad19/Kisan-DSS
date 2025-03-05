@@ -1,4 +1,4 @@
-# 🌾 Kisan DSS - Decision Support System  
+# 🌾 Kisan-DSS (Decision Support System)  
 
 ## 🚀 Empowering Farmers with Real-Time Market Intelligence & Direct Market Access  
 
